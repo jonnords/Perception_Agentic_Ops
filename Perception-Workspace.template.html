@@ -111,7 +111,7 @@
       <div class="panel">
         <h3>Azure CLI authentication</h3>
         <div id="ai-authentication">Reading account context...</div>
-        <p>Sign in from a terminal with <code>az login --tenant &lt;your-tenant-id&gt;</code>, then select Reload settings. The app never starts interactive sign-in, accepts pasted credentials, or sends access tokens to the browser. A cached account context does not prove that a token is valid or that you have access to the model.</p>
+        <p>For model access, sign in from a terminal with <code>az login --tenant &lt;your-model-tenant-id&gt;</code>, then select Reload settings. Perception collection uses the separate scoped sign-in shown in workspace setup. The app never starts interactive sign-in, accepts pasted credentials, or sends access tokens to the browser. A cached account context does not prove that a token is valid or that you have access to the model.</p>
       </div>
       <div class="panel">
         <h3>Run analysis only when you intend to</h3>
@@ -168,7 +168,7 @@ function overview(){
   root.append(reportGrid);
   const setup=element('details',undefined,'panel setup-panel');setup.open=!manifest.reports.some(report=>report.available);
   setup.append(element('summary','First run / refresh saved evidence'),element('p','Stop the running app with Ctrl+C before restarting it with collection switches. Sign in to the intended tenant; tokens are acquired automatically and never pasted into the browser.'));
-  setup.append(element('pre','az login --tenant <your-tenant-id>\n.\\Start-App.ps1 -Refresh'));
+  setup.append(element('pre','az login --tenant <your-tenant-id> --scope https://api.securitycopilot.microsoft.com/Perception.Operate.All\n.\\Start-App.ps1 -Refresh'));
   setup.append(element('p','Optional reports require additional permission or explicit model analysis:'));
   setup.append(element('pre','.\\Start-App.ps1 -Refresh -IncludeDefender\n.\\Start-App.ps1 -AnalyzeAgentBehavior\n.\\Start-App.ps1 -ModelSynthesis'));
   setup.append(element('p','For model analysis, open AI Settings to configure your Azure endpoint and deployment, or continue using perception.config.json. The package has no developer resources or credentials. Model calls may incur charges.'));

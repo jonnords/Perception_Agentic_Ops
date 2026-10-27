@@ -1,12 +1,12 @@
 {
   "product": "Perception Evidence Workspace",
-  "version": "0.2.0-preview.2",
+  "version": "0.2.0-preview.3",
   "distribution": "customer-preview",
   "files": [
     {
       "path": "README.md",
-      "size": 25249,
-      "sha256": "bc65cc0020bda593d878f85769d11a7f5bca735736666d41985530ff92648c3f"
+      "size": 25932,
+      "sha256": "e435ad8156a1103c7743214d3bac88ed1fb98be6623ffe2ebf64acb3631b503a"
     },
     {
       "path": "perception.config.example.json",
@@ -25,8 +25,8 @@
     },
     {
       "path": "Perception-Workspace.template.html",
-      "size": 29055,
-      "sha256": "b6513d06811b4170a944a0e8a1ea67837793f56d4595bb4da7170e1eaaf9554c"
+      "size": 29233,
+      "sha256": "44149294d6c280f0c575f8d02ffa2ea637139e239abd0ca961d643aa475225ea"
     },
     {
       "path": "Get-PerceptionConfiguration.ps1",

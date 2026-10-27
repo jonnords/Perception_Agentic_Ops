@@ -27,7 +27,7 @@ Defender investigation recovery when the API returns HTTP 414.
    in to your approved tenant, then restart with an explicit refresh:
 
    ```powershell
-   az login --tenant <your-tenant-id>
+   az login --tenant <your-tenant-id> --scope https://api.securitycopilot.microsoft.com/Perception.Operate.All
    .\Start-App.ps1 -Refresh
    ```
 
@@ -139,9 +139,15 @@ port, or explicitly choose another port with `-Port`.
 ## Sign in and collect
 
 ```powershell
-az login --tenant <your-tenant-id>
+az login --tenant <your-tenant-id> --scope https://api.securitycopilot.microsoft.com/Perception.Operate.All
 .\Start-App.ps1 -Refresh
 ```
+
+**Include `--scope` during sign-in.** It requests access to the Perception API,
+rather than only the default Azure resource-management access. The application
+requests this same scope when acquiring its token. Successful sign-in still
+requires the tenant-approved Perception access and consent described below;
+it does not grant product permissions automatically.
 
 Tokens are acquired automatically from the signed-in Azure CLI context; do not
 copy tokens into code, browser fields or configuration. Optionally copy
@@ -342,8 +348,10 @@ An initial save requires both an endpoint and deployment.
 
 The authentication panel reads only cached Azure CLI account metadata. It
 does not validate token expiry, prove model access or start interactive login.
-Run `az login --tenant <your-tenant-id>` in a terminal and select **Reload
-settings** after changing the CLI context. Tokens and API keys are never
+For model access, run `az login --tenant <your-model-tenant-id>` in a terminal
+and select **Reload settings** after changing the CLI context. This is separate
+from the scoped Perception sign-in under **Sign in and collect** above,
+especially when the model uses a different tenant. Tokens and API keys are never
 accepted, returned to the browser or stored in the configuration.
 
 **Test connection** is optional and requires its own explicit charge consent
