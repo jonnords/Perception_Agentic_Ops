@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "",
+  "model": {
+    "endpoint": "",
+    "deployment": "",
+    "apiFormat": "responses",
+    "tenantId": "",
+    "tokenResource": "https://cognitiveservices.azure.com"
+  }
+}

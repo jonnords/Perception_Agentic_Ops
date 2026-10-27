@@ -1,0 +1,2 @@
+# Preserve the exact file bytes verified by manifest.json.
+* -text

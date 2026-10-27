@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perception Evidence</title>
+<style>
+  :root{color-scheme:light;--ink:#172d40;--muted:#607486;--line:#e1e8ed;--teal:#117d78;--wash:#edf6f5;--amber:#a75d15;--red:#b04443;--paper:#fff;--bg:#f3f6f8}
+  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 "Segoe UI",sans-serif}
+  button,input,select{font:inherit}button{cursor:pointer}a{color:var(--teal);text-decoration:none}
+  button,.button{border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink);padding:8px 12px}
+  button:hover,.button:hover{border-color:var(--teal)}:focus-visible{outline:3px solid #61bab4;outline-offset:3px}
+  .layout{display:grid;grid-template-columns:206px minmax(0,1fr);min-height:100vh}
+  aside{background:#122b3c;color:#d6e1e6;padding:28px 18px;position:sticky;top:0;height:100vh}
+  .brand{font-size:13px;letter-spacing:.14em;font-weight:700;color:white;margin:0 8px 7px}.brand-sub{font-size:11px;color:#8faab8;margin:0 8px 34px}
+  aside a{display:block;color:#b7cbd5;padding:12px;border-radius:7px;margin-bottom:5px}aside a.active{background:#234857;color:white;border-left:3px solid #69cec0}
+  .side-note{font-size:11px;line-height:1.7;color:#8faab8;margin:35px 10px}
+  main{min-width:0;max-width:1600px;padding:28px 34px 40px;width:100%;margin:auto}
+  .top,.row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+  h1{font-size:29px;letter-spacing:-.7px;margin:4px 0 3px}h2{font-size:19px;margin:0 0 6px;letter-spacing:-.3px}h3{font-size:15px;margin:0 0 7px}
+  p{margin:5px 0 12px}.muted,.small{color:var(--muted)}.small{font-size:12px}.micro{font-size:10px;color:var(--muted)}
+  .snapshot{font-size:11px;color:var(--muted);padding:13px 0 19px}
+  .panel{background:white;border:1px solid var(--line);border-radius:11px;padding:22px;margin-bottom:20px;min-width:0}
+  .hero{background:linear-gradient(120deg,#e7f3f1,#f7fbfa);border-color:#cfe3df;padding:26px}
+  .hero h2{font-size:26px;line-height:1.25;max-width:900px;margin:10px 0 14px}
+  .summary{font-size:14px;line-height:1.8;max-width:1000px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+  .pill{display:inline-block;font-size:11px;padding:3px 8px;border:1px solid #d6e2e6;border-radius:5px;background:#f7fafb;margin:2px 4px 2px 0;overflow-wrap:anywhere}
+  .good{background:#e8f4ee;color:#256650;border-color:#cce4d7}.warn{background:#fbf1e5;color:#92531d;border-color:#efddc7}.bad{background:#faeceb;color:#9f3d3b;border-color:#ebd0ce}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:20px 0}
+  .metric{background:white;border:1px solid var(--line);border-radius:9px;padding:16px 18px}.metric strong{display:block;font-size:29px;line-height:1.2;margin:5px 0}.metric .label{font-size:12px;color:var(--muted)}
+  .columns{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(260px,1fr);gap:20px;align-items:start}.columns>div{min-width:0}
+  .chips{margin:10px 0}.source{padding:0;border:0;background:none;color:var(--teal);font-size:12px;text-align:left}
+  .source:hover{text-decoration:underline}.link{border:0;background:none;color:var(--teal);padding:0;text-align:left;font-weight:600}
+  .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:15px}.flow div{border-top:3px solid #c7d4dc;padding-top:9px;font-size:12px}.flow div:first-child,.flow div:nth-child(2){border-color:var(--teal)}
+  .flow strong{display:block;margin-bottom:4px}.flow span{color:var(--muted);font-size:11px}
+  .scroll{overflow-x:auto;min-width:0}table{border-collapse:collapse;width:100%;text-align:left}th{font-size:10px;letter-spacing:.07em;text-transform:uppercase;background:#f7f9fa;color:var(--muted)}
+  th,td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}.behaviours td:first-child{min-width:155px}.behaviours td:nth-child(2){min-width:260px}
+  .behaviours details{max-width:650px}.behaviours summary{font-size:12px;color:var(--teal);cursor:pointer}.behaviours details p{margin:8px 0}
+  .action{border-bottom:1px solid var(--line);padding:13px 0}.action:last-child{border-bottom:0}.action p{font-size:12px;margin:6px 0;line-height:1.7}
+  .hash{font:11px/1.7 Consolas,monospace;word-break:break-all;color:#35556b}.indicator{padding:14px 0;border-bottom:1px solid var(--line)}.indicator:last-child{border:0}
+  .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:16px 0}.filters input[type=search]{flex:1;min-width:200px}
+  .filters label{min-width:0;max-width:100%}.filters select{min-width:0;max-width:100%;flex:1}
+  .action,.small,.summary{overflow-wrap:anywhere}
+  input,select{padding:8px 10px;border:1px solid #cdd8df;border-radius:6px;background:white;color:var(--ink)}label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+  #campaign-picker label{min-width:0;max-width:100%}#campaign{min-width:0;width:460px;max-width:100%;flex:1}
+  .stack{height:15px;border-radius:4px;overflow:hidden;display:flex;margin:18px 0 12px}.stack span{display:block}
+  .legend{display:flex;gap:15px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+  .timeline{display:flex;gap:5px;overflow-x:auto;padding:12px 0}.timeline button{min-width:25px;flex:1;height:35px;padding:0;border-radius:4px;color:white;font-size:10px;border:0}
+  .presence th{position:sticky;top:0;white-space:nowrap}.presence th:first-child{min-width:110px}.presence td{padding:5px;vertical-align:middle;text-align:center}
+  .presence td:first-child{text-align:left;font-size:12px;white-space:nowrap}.presence button{width:28px;height:23px;padding:0;border-radius:3px;border:0;background:#edf1f4;color:#93a4b0}
+  .presence button.present{background:#318f89;color:white}.presence .count{font-size:10px;color:var(--muted);margin-left:7px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.compare-box{padding:15px;border:1px solid var(--line);border-radius:7px}
+  .empty{padding:28px;background:#f8fafb;border-radius:7px;color:var(--muted)}
+  .note{font-size:12px;color:var(--muted);padding:0 2px;margin:0 0 20px}
+  dialog{border:1px solid var(--line);border-radius:12px;max-width:1100px;width:calc(100vw - 34px);max-height:90vh;padding:0;box-shadow:0 25px 90px #122b3c33;color:var(--ink)}
+  dialog::backdrop{background:#102b3d80}.reader-head{position:sticky;top:0;z-index:1;padding:18px 22px;background:white;border-bottom:1px solid var(--line)}
+  .reader-body{padding:22px;overflow-wrap:anywhere}.reader-body pre{background:#f3f6f8;white-space:pre-wrap;padding:15px;font:12px/1.6 Consolas,monospace;border-radius:6px}
+  .reader-body table{font-size:12px}.reader-body h3{font-size:20px;margin-top:24px}.reader-body h4{font-size:16px;margin-top:18px}.reader-body p{line-height:1.8}
+  .highlight{background:#fff1cc!important;outline:2px solid #ddba65}.reader-state{padding:14px;background:#f0f6f7;border-radius:7px;margin-bottom:16px}
+  .reader-actions{margin-top:10px}.reader-actions select{max-width:100%}
+  [hidden]{display:none!important}
+  .loop-view{--ink:#24292f;--muted:#4d5661}
+  .loop-table{min-width:1180px}.loop-table td{font-size:12px}.loop-table th{white-space:nowrap}
+  .loop-table td:first-child{min-width:210px;max-width:300px}.loop-table .link{color:#263f43}
+  .loop-stage{display:block;padding:7px 9px;border:1px solid #dce3e8;border-radius:7px;background:#f4f6f8;color:#414d58;font-size:11px;white-space:nowrap}
+  .loop-stage.review{border-color:#c2d9d2;background:#edf6f2;color:#255646}
+  .loop-detail{scroll-margin-top:16px}.loop-stage-detail{padding:15px 0;border-top:1px solid var(--line)}
+  .loop-stage-detail .source{display:block;margin:8px 0;overflow-wrap:anywhere}
+  figure.loop-model{margin:0 0 20px}
+  .loop-model figcaption p{color:var(--muted);font-size:12px}
+  .loop-coordination{border:1px solid #d8cde9;border-radius:8px;background:#f5f1fa;padding:14px 16px;margin:18px 0;color:#483266}
+  .loop-coordination strong{display:block;margin-bottom:4px}.loop-coordination p{margin:0;font-size:12px}
+  .loop-model-track{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:20px;list-style:none;padding:0;margin:0}
+  .loop-model-node{position:relative;min-width:0;border:1px solid #ccdae5;border-top:4px solid #326482;border-radius:8px;padding:12px;background:#f6f9fc;overflow-wrap:anywhere}
+  .loop-model-node.human{border-color:#d8cde9;border-top-color:#72529a;background:#f8f5fc}
+  .loop-model-node:not(:last-child)::after{content:"";position:absolute;right:-15px;top:32px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #596b7a}
+  .loop-model-role{font-size:10px;color:#405367;min-height:32px}
+  .loop-model-node.human .loop-model-role{color:#583b78}
+  .loop-model-node h3{font-size:15px;margin:5px 0 8px}.loop-model-target{font-size:12px;min-height:76px;margin:0 0 12px}
+  .loop-model-evidence{border-top:1px dashed #bdcad4;padding-top:10px;font-size:11px;color:#414d58}
+  .loop-model-evidence strong,.loop-model-evidence span{display:block}.loop-model-evidence strong{margin:5px 0}
+  .loop-model-evidence.review{color:#255646}.loop-model-evidence.review strong{background:#e8f4ee;border-radius:5px;padding:5px 6px}
+  .loop-feedback{position:relative;margin:18px 6% 16px;padding:10px 14px;border:2px solid #596b7a;border-top:0;border-radius:0 0 12px 12px;text-align:center;font-size:12px;color:#344653}
+  .loop-feedback::before{content:"";position:absolute;left:-5px;top:-3px;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid #596b7a}
+  .loop-model-changes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+  .loop-model-change{padding:12px;border:1px solid var(--line);border-radius:8px}.loop-model-change strong{display:block;font-size:12px;margin-bottom:5px}.loop-model-change p{font-size:12px;color:var(--muted);margin:0}
+  .loop-model-validation{padding:12px 14px;background:#f4f6f8;border-radius:7px;font-size:12px;color:#414d58}
+  .loop-playbook-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px;align-items:start}
+  .loop-playbook{min-width:0;overflow-wrap:anywhere;border:1px solid #c8dff1;border-radius:12px;background:#f0f7fd;overflow:hidden}
+  .loop-playbook h3{margin:0;padding:18px 14px;background:#075d98;color:#fff;font-size:19px}
+  .loop-playbook:nth-child(even) h3{background:#0078c5}.loop-playbook:last-child h3{background:#60328c}
+  .loop-playbook-body{padding:16px}.loop-playbook-body>p{margin:0 0 14px;line-height:1.7}
+  .loop-mapped-agent{border:1px solid #d9e4ed;border-radius:10px;background:#fff;margin:10px 0;overflow:hidden}
+  .loop-mapped-agent>summary{padding:12px 14px;cursor:pointer;font-size:12px;color:#25465e}
+  .loop-mapped-agent>summary strong{font-size:13px}.loop-mapped-agent>summary span{display:block;margin:4px 0 0 14px}
+  .loop-agent-status{font-size:11px;color:#4c647a}.loop-mapped-agent[open]>summary{background:#eff5fb;border-bottom:1px solid #d9e4ed}
+  .loop-mapped-agent>p,.loop-mapped-agent>.loop-agent-id{margin:12px 14px;display:block}
+  .loop-agent-id{font:10px/1.7 Consolas,monospace;overflow-wrap:anywhere;color:#53677a}
+  .loop-agent-run{border-top:1px solid #e1e8ef;margin:12px 14px;padding-top:12px;font-size:11px}
+  .loop-agent-run .source,.loop-catalog-item .source{display:block;margin-top:7px;text-align:left;overflow-wrap:anywhere;white-space:normal}
+  .loop-catalog-detail{margin:12px 0;font-size:12px}.loop-catalog-detail>summary{cursor:pointer;color:#345974;font-weight:600}
+  .loop-catalog-item{padding:12px 0;border-bottom:1px solid #e1e8ef}.loop-catalog-item>strong,.loop-catalog-item>code{display:block}.loop-catalog-item>code{font-size:10px;overflow-wrap:anywhere}
+  @media(max-width:1250px){.loop-playbook-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:700px){.loop-playbook-grid{grid-template-columns:1fr}}
+  figure.loop-demo-sankey{margin:0 0 20px;border:2px solid #c79c43}
+  .loop-demo-banner{padding:11px 14px;border-radius:7px;background:#fff3d8;color:#624408;font-weight:700;margin-bottom:14px}
+  .loop-demo-sankey figcaption p,.loop-demo-sankey>p{font-size:12px;color:#4d5661}
+  .loop-demo-scroll{overflow-x:auto;max-width:100%;margin:12px 0}
+  .loop-demo-svg{display:block;width:100%;min-width:1100px;height:auto;font-family:"Segoe UI",sans-serif}
+  .loop-demo-svg text{fill:#24292f;font-size:13px}.loop-demo-svg .demo-stage-label{font-size:16px;font-weight:600}
+  .loop-demo-svg .demo-watermark{font-size:64px;font-weight:700;fill:#77581c;opacity:.12}
+  .loop-demo-legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px}
+  .loop-demo-legend span{display:flex;align-items:center;gap:7px}.loop-demo-legend i{display:inline-block;width:12px;height:12px;border-radius:3px}
+  .loop-demo-responses{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:16px 0}
+  .loop-demo-response{padding:12px;border:1px solid #dce2e8;border-top:4px solid #167d8d;border-radius:7px;background:#f5fafb}
+  .loop-demo-response h3{font-size:14px;margin:0 0 8px}.loop-demo-response p{font-size:12px;margin:0;color:#4d5661}
+  .loop-demo-sankey details{margin:14px 0;font-size:12px}.loop-demo-sankey summary{cursor:pointer;font-weight:600}
+  .loop-demo-end{padding:10px 12px;background:#f4f6f8;border-radius:7px;font-weight:600}
+  @media(max-width:1100px){.loop-model-track{grid-template-columns:1fr}.loop-model-node{display:grid;grid-template-columns:minmax(90px,1fr) minmax(0,2fr);column-gap:14px}.loop-model-role{grid-column:1;min-height:0}.loop-model-node h3{grid-column:1;grid-row:2}.loop-model-target{grid-column:2;grid-row:1 / 3;min-height:0;margin:0}.loop-model-evidence{grid-column:1 / -1;margin-top:10px}.loop-model-node:not(:last-child)::after{right:auto;left:22px;top:auto;bottom:-15px;transform:rotate(90deg)}.loop-model-changes{grid-template-columns:1fr}.loop-feedback{margin:18px 0}}
+  #loop-count{color:var(--muted);font-size:12px}
+  @media(max-width:1200px){main{padding:24px}.layout{grid-template-columns:180px minmax(0,1fr)}.columns{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:700px){.layout{display:block}aside{position:static;height:auto;padding:15px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}.brand{margin:0 12px 0 0}.brand-sub,.side-note{display:none}aside a{font-size:12px;padding:7px;margin:0}main{padding:16px}.top{align-items:flex-start}h1{font-size:25px}.hero h2{font-size:22px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{padding:12px}.panel{padding:17px}.compare-grid{grid-template-columns:1fr}.filters input[type=search]{min-width:0;width:100%}.hero{padding:20px}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside aria-label="Evidence experiences">
+    <div><div class="brand">PERCEPTION</div><div class="brand-sub">EVIDENCE WORKSPACE</div></div>
+    <a href="/threat-protection" id="briefing-nav">Operational Briefing</a>
+    <a href="/assurance-freshness" id="quality-nav">Run Quality</a>
+    <a href="/operational-loops" id="loops-nav">Operational Loops &amp; Outcomes</a>
+    <a href="/systemic-threat-signals" id="systemic-nav">Systemic Threat Signals</a>
+    <a href="/agent-behavior" id="behavior-nav">Agent Behavior Analysis</a>
+    <a href="/" id="environment-nav">Environment explorer</a>
+    <div class="side-note">Built from collected sessions and report text.<br><br>Intelligence is not the same as verified protection.</div>
+  </aside>
+  <main>
+    <div class="top"><div><div class="eyebrow">From the actual evidence</div><h1 id="page-title"></h1><p class="muted" id="page-subtitle"></p></div><button id="export">Export findings</button></div>
+    <div class="snapshot" id="snapshot"></div>
+    <div class="filters" id="operational-filters">
+      <label>Workflow <select id="workflow"><option value="">All workflows</option></select></label>
+      <label>Agent <select id="agent"><option value="">All agents</option></select></label>
+      <label>Run started <select id="period"><option value="">All retained time</option><option value="1">Last 24 hours</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label>
+      <label>Outcome <select id="outcome"><option value="">All outcomes</option><option value="attention">Needs attention</option><option value="completed">API completed</option><option value="pending">In progress / queued</option><option value="failed">Failed / cancelled</option><option value="evidence">Readable evidence collected</option></select></label>
+    </div>
+    <div class="filters" id="campaign-picker"><label>Incident / input <select id="campaign"><option value="">All incidents and inputs</option></select></label><span class="small" id="group-note"></span></div>
+    <div class="filters" id="signal-filters" hidden>
+      <label>Search connections <input type="search" id="signal-search" placeholder="Entity, hypothesis or evidence"></label>
+      <label>Show <select id="signal-kind"><option value="">All connections</option><option value="correlations">Factual correlations</option><option value="hypotheses">Reviewable hypotheses</option></select></label>
+    </div>
+    <div class="filters" id="loop-filters" hidden>
+      <label>Search evidence groups <input type="search" id="loop-search" placeholder="Group, incident, workflow or input"></label>
+      <label>Possible entry flow <select id="loop-flow"><option value="">All flows</option><option value="alert-led">Alert-led</option><option value="threat-led">Threat-led</option><option value="exposure-led">Exposure-led</option><option value="hunt-led">Hunt-led</option><option value="validation-led">Validation-led</option><option value="mixed">Mixed / uncertain</option><option value="unclassified">Unclassified</option></select></label>
+      <label>Evidence <select id="loop-evidence"><option value="">All groups</option><option value="mapped">Mapped artifacts to review</option><option value="unmapped">No mapped artifact evidence</option><option value="gaps">Collection gaps</option><option value="explicit">Explicit loop IDs</option></select></label>
+      <span id="loop-count" role="status"></span>
+    </div>
+    <div id="content"></div>
+    <p class="note" id="scope-note"></p>
+  </main>
+</div>
+<dialog id="reader" aria-labelledby="reader-title">
+  <div class="reader-head"><div class="row"><h2 id="reader-title"></h2><button id="reader-close">Close evidence</button></div><div class="small" id="reader-meta"></div><div class="reader-actions"><label>Collected artifact <select id="reader-artifact"></select></label></div></div>
+  <div class="reader-body" id="reader-body"></div>
+</dialog>
+<script>
+'use strict';
+const payload=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob('__SNAPSHOT_PAYLOAD__'),c=>c.charCodeAt(0))));
+const insights=payload.report.snapshotInsights;
+const quality=payload.experience==='quality';
+const systemic=payload.experience==='systemic';
+const loops=payload.experience==='loops';
+const $=id=>document.getElementById(id);
+const labels={report:'Full intelligence report','source-unavailable':'Source unavailable','output-missing':'Detailed output missing',pending:'Not finished',failed:'Failed','collection-issue':'Collection issue','summary-only':'Summary collected','other-output':'Workflow artifact','messages-only':'Agent messages only','no-output':'No collected output'};
+const colors={report:'#268d80','source-unavailable':'#c18b43','output-missing':'#b45e54',pending:'#8799a8',failed:'#ae4545','collection-issue':'#ae4545','summary-only':'#8176a1','other-output':'#5b819e','messages-only':'#607d8b','no-output':'#a3adb5'};
+const sessions=new Map(insights.sessions.map(s=>[s.id,s]));
+function node(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
+function plain(text){return String(text||'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/[`*]/g,'').trim();}
+function date(value){return value?new Date(value).toLocaleString():'Not supplied';}
+function time(value){return new Date(value).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function pill(text,cls){return node('span',text,'pill '+(cls||''));}
+function panel(title,sub){const el=node('section',undefined,'panel');if(title)el.append(node('h2',title));if(sub)el.append(node('p',sub,'small'));return el;}
+function sourceButton(sessionId,path,line,label){const b=node('button',label||'View source','source');b.onclick=()=>openEvidence(sessionId,path,line);return b;}
+function metric(label,value,detail){const el=node('div',undefined,'metric');el.append(node('span',label,'label'),node('strong',String(value)),node('div',detail,'micro'));return el;}
+function download(value,name){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));const a=node('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function badge(state){return pill(labels[state],state==='report'?'good':['source-unavailable','pending','summary-only'].includes(state)?'warn':['output-missing','failed','collection-issue'].includes(state)?'bad':'');}
+let selected=null;
+let selectedGroup=null;
+let readerRun=null;
+function renderSource(text,line){
+  const body=$('reader-body'),lines=String(text).split(/\r?\n/);let code=null,table=null,tableBody=null;
+  for(let i=0;i<lines.length;i++){
+    const raw=lines[i],number=i+1;let el;
+    if(/^\s*```/.test(raw)){if(code){code=null;}else{code=node('pre');code.id='line-'+number;body.append(code);}table=null;continue;}
+    if(code){code.append(node('span',raw+'\n'));continue;}
+    if(/^\s*\|.*\|\s*$/.test(raw)){
+      const cells=raw.trim().replace(/^\||\|$/g,'').split(/(?<!\\)\|/).map(plain);
+      if(cells.every(c=>/^:?-{2,}:?$/.test(c)))continue;
+      if(!table){const wrap=node('div',undefined,'scroll');table=node('table');const head=node('thead'),row=node('tr');for(const cell of cells)row.append(node('th',cell));head.append(row);table.append(head);tableBody=node('tbody');table.append(tableBody);wrap.append(table);body.append(wrap);continue;}
+      el=node('tr');for(const cell of cells)el.append(node('td',cell));tableBody.append(el);
+    }else{
+      table=null;
+      if(!raw.trim()||/^\s*---+\s*$/.test(raw))continue;
+      const heading=raw.match(/^(#{1,4})\s+(.+)/);
+      el=heading?node(heading[1].length<3?'h3':'h4',plain(heading[2])):node('p',plain(raw));
+      body.append(el);
+    }
+    el.id='line-'+number;if(number===line)el.classList.add('highlight');
+  }
+  if(line)setTimeout(()=>{const el=$('line-'+line);if(el)el.scrollIntoView({block:'center'});},20);
+}
+function renderReader(path,line){
+  const run=readerRun,body=$('reader-body');body.replaceChildren();
+  const status=node('div',undefined,'reader-state');status.append(badge(run.classification),node('p','API state: '+run.apiState+(run.reason?' / '+run.reason:''),'small'));body.append(status);
+  const artifact=run.artifacts.find(a=>a.path===path);
+  if(!artifact){body.append(node('p','No artifact was collected for this run.','empty'));return;}
+  if(artifact.error){body.append(node('p','Artifact collection error: '+JSON.stringify(artifact.error),'empty'));return;}
+  renderSource(artifact.content,line);
+}
+function openEvidence(id,path,line){
+  const run=sessions.get(id);if(!run)return;readerRun=run;
+  $('reader-title').textContent='Collected evidence';
+  $('reader-meta').textContent='Run started '+date(run.startedAt)+' / '+run.id;
+  const select=$('reader-artifact');select.replaceChildren();
+  for(const artifact of run.artifacts){const option=node('option',artifact.path);option.value=artifact.path;select.append(option);}
+  const preferred=path||(run.reports[0]&&run.reports[0].path)||(run.artifacts[0]&&run.artifacts[0].path);
+  if(preferred)select.value=preferred;select.disabled=!run.artifacts.length;
+  renderReader(preferred,line);if(!$('reader').open)$('reader').showModal();
+}
+$('reader-close').onclick=()=>$('reader').close();
+$('reader').onkeydown=event=>{if(event.key==='Escape'){event.preventDefault();$('reader').close();}};
+$('reader-artifact').onchange=()=>renderReader($('reader-artifact').value);
+function renderBriefing(){
+  const root=$('content');root.replaceChildren();
+  const runs=filteredRuns();
+  if(!selectedGroup){renderOperationalGroups(root,runs);return;}
+  renderOperationalDetail(root,runs);
+  if(!selected||!selected.latestReport||!runs.some(r=>r.id===selected.latestReport.sessionId))return;
+  const report=selected.latestReport,run=sessions.get(report.sessionId);
+  const hero=panel();hero.classList.add('hero');hero.append(node('div','INTELLIGENCE DOSSIER','eyebrow'),node('h2',report.title),node('p',report.summary||'No threat summary section was found.','summary'));
+  const meta=node('div',undefined,'chips');for(const actor of report.actors)meta.append(pill('Reported actor: '+actor));meta.append(pill('Article-derived intelligence'));hero.append(meta);
+  hero.append(sourceButton(run.id,report.path,null,'Read latest collected report'),node('p','Latest report from run started '+date(run.startedAt)+(report.sourceUpdatedAt?' / Source update reported as '+date(report.sourceUpdatedAt):''),'micro'));root.append(hero);
+  const cards=node('div',undefined,'cards');cards.append(metric('Extracted behaviours',report.behaviours.length,'Rows in the selected report'),metric('ATT&CK identifiers',report.techniqueIds.length,'Distinct parent and sub-technique IDs'),metric('Reported indicators',report.indicators.length,'Source-extracted, not tenant sightings'),metric('Reports for this input',selected.reportColumns.length,selected.sessionCount+' related sessions'));root.append(cards);
+  const boundary=panel('Where the evidence currently stops','This is a view of collected evidence, not a claim that your tenant is protected.');
+  const flow=node('div',undefined,'flow');
+  for(const [title,text] of [['Intelligence extracted','A substantive report was collected.'],['TIP status reported',report.indicators.filter(i=>i.tipCategory==='active').length+' / '+report.indicators.length+' indicators marked active by the report.'],['Environment assessment','Not established by this article report.'],['Deployed & validated controls','Not established by this article report.']]){
+    const item=node('div');item.append(node('strong',title),node('span',text));flow.append(item);
+  }
+  boundary.append(flow);root.append(boundary);
+  const columns=node('div',undefined,'columns'),left=node('div'),right=node('div');
+  const behaviours=panel('What would we look for?','Behaviours, suggested detection opportunities and telemetry extracted from the report. These are not observed tenant activity or validated detections.');
+  const scroll=node('div',undefined,'scroll'),table=node('table',undefined,'behaviours'),head=node('thead'),hr=node('tr');
+  for(const text of ['ATT&CK / tactic','Source-described behaviour','Detection opportunity'])hr.append(node('th',text));head.append(hr);table.append(head);const body=node('tbody');
+  for(const b of report.behaviours){
+    const row=node('tr'),ids=node('td');for(const id of b.techniqueIds)ids.append(pill(id));ids.append(node('div',b.tactic,'micro'));
+    const action=node('td',b.action),opportunity=node('td'),details=node('details');details.append(node('summary','Telemetry & suggested check'),node('p',b.opportunity||'No detection opportunity extracted.'),node('p','Telemetry: '+(b.telemetry||'Not specified'),'small'),sourceButton(run.id,report.path,b.line));opportunity.append(details);row.append(ids,action,opportunity);body.append(row);
+  }
+  table.append(body);scroll.append(table);behaviours.append(scroll);
+  if(!report.behaviours.length)behaviours.append(node('p','No supported behaviour table was found. Read the source report rather than assuming no techniques exist.','empty'));
+  left.append(behaviours);
+  const indicators=panel('Indicators & reported TIP status','TIP membership is a reported intelligence-store state, not evidence of endpoint blocking or a deployed detection.');
+  for(const i of report.indicators){
+    const item=node('div',undefined,'indicator'),heading=node('div',undefined,'row');heading.append(pill(i.type),pill(i.tipStatus||'TIP status not extracted',i.tipCategory==='active'?'good':i.tipCategory==='unknown'?'':'warn'));
+    item.append(heading,node('div',i.value,'hash'),node('p',i.recommendation||i.context,'small'),sourceButton(run.id,report.path,i.tipLine||i.line,'Inspect indicator evidence'));indicators.append(item);
+  }
+  if(!report.indicators.length)indicators.append(node('p','No indicator rows were extracted.','small'));left.append(indicators);
+  if(report.packages.length){const packages=panel('Affected versions in the report','Mentioned in the threat summary; presence in your environment has not been assessed here.');for(const item of report.packages)packages.append(node('div',item,'pill'));right.append(packages);}
+  const actions=panel('What the report recommends','Recommendations only. Completion, ownership and tenant applicability are not inferred.');
+  const list=node('div');let expanded=false;
+  function renderActions(){list.replaceChildren();for(const action of report.actions.slice(0,expanded?undefined:5)){const item=node('div',undefined,'action');item.append(pill(action.priority,action.priority==='Critical'?'warn':''),node('p',action.text.replace(/^\[[^\]]+\]\s*(?:[\u2014-]\s*)?/,'')),sourceButton(run.id,report.path,action.line));list.append(item);}}
+  renderActions();actions.append(list);if(report.actions.length>5){const toggle=node('button','Show all '+report.actions.length+' recommendations');toggle.onclick=()=>{expanded=!expanded;renderActions();toggle.textContent=expanded?'Show fewer recommendations':'Show all '+report.actions.length+' recommendations';};actions.append(toggle);}right.append(actions);
+  const hunting=panel('Hunting query handoff');
+  hunting.append(node('p',report.huntingQueriesProvided?'Query code is present in the source report. It has not been executed or validated by this view.':'No executable hunting query was extracted from this report. Detection opportunities are present, but they are not query implementations.','small'));
+  hunting.append(sourceButton(run.id,report.path,null,'Inspect source context'));right.append(hunting);
+  columns.append(left,right);root.append(columns);
+}
+function failed(run){return /^(failed|cancelled|canceled)$/i.test(run.apiState)||run.agentRuns.some(a=>/^(failed|cancelled|canceled)$/i.test(a.state));}
+function pending(run){return /^(notStarted|pending|queued|running|inProgress)$/i.test(run.apiState);}
+function attention(run){return failed(run)||run.collectionIssues.length>0||['source-unavailable','output-missing','no-output'].includes(run.classification)||(!pending(run)&&run.isIntelligence&&run.reportCount===0);}
+function baseRuns(){
+  const workflow=$('workflow').value,agent=$('agent').value,period=Number($('period').value),outcome=$('outcome').value;
+  return insights.sessions.filter(r=>(!workflow||r.workflow===workflow)&&(!agent||r.agents.includes(agent))&&
+    (!period||(new Date(r.startedAt)<=new Date(insights.asOf)&&new Date(r.startedAt)>=new Date(new Date(insights.asOf).getTime()-period*86400000)))&&
+    (!outcome||(outcome==='attention'&&attention(r))||(outcome==='completed'&&/^(succeeded|completed)$/i.test(r.apiState))||
+      (outcome==='pending'&&pending(r))||(outcome==='failed'&&failed(r))||(outcome==='evidence'&&r.hasEvidence)));
+}
+function filteredRuns(){return baseRuns().filter(r=>!selectedGroup||selectedGroup.sessionIds.includes(r.id));}
+function visibleAgentRuns(run){return run.agentRuns.filter(a=>!$('agent').value||a.agent===$('agent').value);}
+function newest(runs){return runs.slice().sort((a,b)=>b.startedAt.localeCompare(a.startedAt)||a.id.localeCompare(b.id));}
+function evidenceAge(run){return run?(run.ageDays<0?'Future-dated run':run.ageDays+' days since run start'):'No readable evidence';}
+function selectGroup(group){$('campaign').value=group.id;selectedGroup=group;selected=insights.campaigns.find(c=>c.id===group.id)||null;render();}
+function renderOverview(root,runs){
+  const hero=panel('Lay of the land','Agent-reported findings across every selected workflow. This is an evidence status report, not an independently verified security-posture assessment.');
+  hero.classList.add('hero');hero.append(node('p',runs.length+' sessions / '+runs.reduce((n,r)=>n+visibleAgentRuns(r).length,0)+' selected agent runs / '+new Set(runs.map(r=>r.workflow)).size+' workflows. '+runs.filter(attention).length+' sessions need attention.','summary'));
+  const cards=node('div',undefined,'cards');
+  cards.append(metric('Readable evidence',runs.filter(r=>r.hasEvidence).length,'Sessions with artifacts or agent transcripts'),
+    metric('Needs attention',runs.filter(attention).length,'Failures, collection gaps or expected TI output missing'),
+    metric('In progress / queued',runs.filter(pending).length,'Session API lifecycle status'),
+    metric('Failed / cancelled',runs.filter(failed).length,'Session or child agent run status'));
+  hero.append(cards);root.append(hero);
+  const workflowPanel=panel('Workflow status','Output availability and lifecycle state are independent. Evidence age is based on session start, not activity or artifact creation time.');
+  const scroll=node('div',undefined,'scroll'),table=node('table'),head=node('thead'),hr=node('tr');
+  for(const label of ['Workflow','Sessions / agent runs','API completed','Needs attention','Latest readable evidence'])hr.append(node('th',label));
+  head.append(hr);table.append(head);const body=node('tbody');
+  for(const workflow of [...new Set(runs.map(r=>r.workflow))].sort()){
+    const subset=runs.filter(r=>r.workflow===workflow),latest=newest(subset.filter(r=>r.hasEvidence))[0],row=node('tr');
+    row.append(node('td',workflow),node('td',subset.length+' / '+subset.reduce((n,r)=>n+visibleAgentRuns(r).length,0)),node('td',String(subset.filter(r=>/^(succeeded|completed)$/i.test(r.apiState)).length)),node('td',String(subset.filter(attention).length)));
+    const age=node('td',evidenceAge(latest));if(latest)age.append(node('div',date(latest.startedAt),'micro'),sourceButton(latest.id,null,null,'Inspect evidence'));row.append(age);body.append(row);
+  }
+  table.append(body);scroll.append(table);workflowPanel.append(scroll);
+  if(!runs.length)workflowPanel.append(node('p','No sessions match the selected filters.','empty'));
+  root.append(workflowPanel);
+}
+function renderOperationalGroups(root,runs){
+  const section=panel('What the agents are reporting','Latest readable evidence for each exact workflow/input group. Older findings remain visible when a newer run has no evidence. No titles or similar-looking entities are merged.');
+  for(const group of insights.groups){
+    const related=newest(runs.filter(r=>group.sessionIds.includes(r.id)));if(!related.length)continue;
+    const latest=related[0],evidenceRun=related.find(r=>r.hasEvidence),item=node('div',undefined,'action'),button=node('button',latest.title||latest.id,'link');button.onclick=()=>selectGroup(group);
+    item.append(button,node('div',group.workflow+' / '+related.length+' sessions / '+(group.explicitCorrelation?group.inputTags.join(' / '):'session-scoped'),'small'));
+    const excerpts=evidenceRun?evidenceRun.evidence.filter(e=>['verdict','summary','findings'].includes(e.category)):[];
+    if(excerpts.length)item.append(node('p',excerpts[0].heading+': '+plain(excerpts[0].text),'summary'),sourceButton(evidenceRun.id,excerpts[0].path,excerpts[0].line,'Read reported finding'));
+    else item.append(node('p',evidenceRun?'Readable evidence is available; no supported finding section was identified.':'No readable evidence was collected.','small'));
+    item.append(badge(latest.classification),node('span','Latest evidence: '+evidenceAge(evidenceRun),'small'));
+    if(evidenceRun&&evidenceRun.id!==latest.id)item.append(pill('Latest run did not produce readable evidence','warn'));
+    if(attention(latest))item.append(pill('Latest run needs attention','warn'));
+    section.append(item);
+  }
+  if(!runs.length)section.append(node('p','No findings available for these filters.','empty'));
+  root.append(section);
+}
+function renderOperationalDetail(root,runs){
+  const ordered=newest(runs),latest=ordered[0],withEvidence=ordered.filter(r=>r.hasEvidence),evidenceRun=withEvidence[0];
+  if(!latest){root.append(node('p','No sessions match these filters.','empty'));return;}
+  const detail=panel(latest.title||latest.id,'Agent-reported conclusions and recommendations; not verified remediation or environmental coverage.');
+  detail.append(pill(latest.workflow),pill('Workflow identified by '+latest.workflowSource),node('p','Latest session: '+date(latest.startedAt)+' / Latest readable evidence: '+evidenceAge(evidenceRun),'small'));
+  for(const issue of latest.collectionIssues)detail.append(node('p','Latest session collection gap: '+issue,'small'));
+  if(evidenceRun&&latest.id!==evidenceRun.id)detail.append(node('p','These excerpts are from an older run because the latest run has no readable evidence.','small'));
+  if(evidenceRun){
+    for(const excerpt of evidenceRun.evidence){
+      const item=node('details');item.append(node('summary',excerpt.heading+' / '+excerpt.category),node('p',excerpt.text,'summary'),sourceButton(evidenceRun.id,excerpt.path,excerpt.line,'Read complete source section'));detail.append(item);
+    }
+    if(!evidenceRun.evidence.length)detail.append(node('p','No supported artifact sections were identified. Inspect the agent transcripts below.','small'));
+    detail.append(sourceButton(evidenceRun.id,null,null,'Read all collected evidence'));
+    if(withEvidence.length>1){
+      const previous=withEvidence[1],key=e=>JSON.stringify([e.path,e.heading,e.text]),before=new Set(previous.evidence.map(key)),after=new Set(evidenceRun.evidence.map(key));
+      const added=evidenceRun.evidence.filter(e=>!before.has(key(e))),removed=previous.evidence.filter(e=>!after.has(key(e)));
+      const changes=panel('Reported differences since the previous evidence-bearing run','Exact section-text differences, not proof of new activity, changed risk or completed remediation.');
+      changes.append(node('p',added.length+' added or changed sections / '+removed.length+' removed or changed sections.','small'));
+      for(const [label,run,excerpts] of [['Latest',evidenceRun,added],['Previous',previous,removed]])for(const excerpt of excerpts){const item=node('details');item.append(node('summary',label+': '+excerpt.heading),node('p',excerpt.text,'summary'),sourceButton(run.id,excerpt.path,excerpt.line));changes.append(item);}
+      changes.append(sourceButton(previous.id,null,null,'Read previous evidence'));detail.append(changes);
+    }
+  }else detail.append(node('p','No readable evidence collected for this input.','empty'));
+  root.append(detail);renderAgentRuns(root,ordered);
+}
+function renderAgentRuns(root,runs){
+  const section=panel('Agentic run status','Every retained child agent run is included. Session artifacts are shared outputs and are not attributed to a particular agent without an explicit source link.');
+  const scroll=node('div',undefined,'scroll'),table=node('table'),head=node('thead'),hr=node('tr');
+  for(const label of ['Session / agent run','Agent','API state','Messages / duration','Evidence / collection gaps'])hr.append(node('th',label));head.append(hr);table.append(head);const body=node('tbody');
+  const agent=$('agent').value;
+  for(const run of runs)for(const child of run.agentRuns.filter(a=>!agent||a.agent===agent)){
+    const row=node('tr'),identity=node('td',child.id||'ID not supplied');identity.append(node('div',run.id,'micro'));
+    row.append(identity,node('td',child.agent),node('td',child.state||'Not supplied'),node('td',child.messageCount+' messages / '+(child.durationMs==null?'duration not supplied':child.durationMs+' ms')));
+    const evidence=node('td');if(child.transcriptPath)evidence.append(sourceButton(run.id,child.transcriptPath,null,'Read agent messages'));if(child.error)evidence.append(pill('Message collection error','bad'));if(child.messagesTruncated)evidence.append(pill('Messages truncated','warn'));row.append(evidence);body.append(row);
+  }
+  table.append(body);scroll.append(table);section.append(scroll);root.append(section);
+}
+function signalMatches(value){return JSON.stringify(value).toLowerCase().includes($('signal-search').value.trim().toLowerCase());}
+function signalSources(title,sources){
+  const section=node('details');section.append(node('summary',title+' ('+sources.length+')'));
+  if(!sources.length)section.append(node('p','No source cited in this category. This does not establish that no counterevidence or other context exists.','small'));
+  for(const source of sources){
+    const item=node('div',undefined,'action');item.append(pill(source.sourceKind||'Source evidence'),node('p',source.excerpt,'summary'),node('p','Session '+source.sessionId+' / '+source.path+' / line '+source.line,'micro'),sourceButton(source.sessionId,source.path,source.line,'Inspect exact source'));section.append(item);
+  }
+  return section;
+}
+function hypothesisCard(hypothesis,method){
+  const card=panel(hypothesis.title,hypothesis.explanation);
+  card.append(pill(hypothesis.status,'warn'),pill(method),pill(hypothesis.kind));
+  if(hypothesis.rule)card.append(node('p','Transparent rule: '+hypothesis.rule,'micro'));
+  card.append(signalSources('Supporting evidence',hypothesis.evidence),signalSources('Potential counterevidence',hypothesis.counterevidence),signalSources('Context only, not tenant confirmation',hypothesis.intelligenceContext));
+  for(const [title,values] of [['Alternative explanations',hypothesis.alternatives],['Missing evidence / uncertainty',hypothesis.missingEvidence],['Next investigative checks',hypothesis.nextChecks]]){
+    const section=node('details');section.append(node('summary',title));const list=node('ul');for(const value of values)list.append(node('li',value));section.append(list);card.append(section);
+  }
+  return card;
+}
+function renderSystemic(){
+  const root=$('content');root.replaceChildren();
+  const signals=payload.report.systemicSignals,model=signals.modelSynthesis;
+  const correlations=signals.correlations.filter(signalMatches),ruleHypotheses=signals.hypotheses.filter(signalMatches),modelHypotheses=(model.hypotheses||[]).filter(signalMatches);
+  const hero=panel('Could separate findings describe a bigger problem?','These are correlations and hypotheses for analyst review, not confirmed campaigns, verified systemic weaknesses or proof that agents missed a connection.');
+  hero.classList.add('hero');hero.append(node('p',signals.method,'small'));
+  const cards=node('div',undefined,'cards');cards.append(metric('Factual correlations',correlations.length,'Exact entity mentions across operational sessions'),metric('Rule hypotheses',ruleHypotheses.length,'Explicit, inspectable wording rules'),metric('Model hypotheses',modelHypotheses.length,'Source-linked proposals, not verified conclusions'),metric('Retained sessions',signals.sessionCount,'Snapshot coverage, not all tenant history'));hero.append(cards);root.append(hero);
+  if(model.status==='completed'){
+    const review=panel('Model synthesis — unverified analytical overview',model.summary);
+    review.append(pill('Model-assisted; analyst review required','warn'),node('p','Model: '+model.metadata.model+' / Response: '+(model.metadata.responseId||'Not supplied'),'micro'),node('p',model.validationBoundary,'small'),signalSources('Overview source references',model.summaryEvidence));root.append(review);
+  }else{
+    root.append(panel('Model synthesis was not requested','This report contains local correlations and rule hypotheses only. Generate with New-PerceptionSystemicThreatReport.ps1 -UseModel to use your configured Azure model connection. A local-only result is not a completed model assessment.'));
+  }
+  const kind=$('signal-kind').value;
+  if(kind!=='correlations'){
+    const heading=panel('Reviewable cross-run hypotheses','Corroboration, event-time overlap, causality and remediation are not established by the number of reports.');root.append(heading);
+    for(const hypothesis of modelHypotheses)root.append(hypothesisCard(hypothesis,'Configured Azure model'));
+    for(const hypothesis of ruleHypotheses)root.append(hypothesisCard(hypothesis,'Local deterministic rule'));
+    if(!modelHypotheses.length&&!ruleHypotheses.length)heading.append(node('p','No supported hypothesis matches this report and search. This is not an assurance that no systemic threat exists.','empty'));
+  }
+  if(kind!=='hypotheses'){
+    const heading=panel('Factual cross-run connections','A shared identifier is a text-level connection, not proof of related events. Intelligence-only matches cannot create these correlations.');root.append(heading);
+    for(const correlation of correlations){
+      const card=panel(correlation.entity.value,correlation.explanation);
+      card.append(pill(correlation.entity.type),pill(correlation.sessionIds.length+' operational sessions'),pill(correlation.inputScopeCount+' explicit incident/alert scopes'),pill(correlation.distinctContentCount+' non-identical artifact texts'),signalSources('Operational mentions (including uncertain or benign statements)',correlation.evidence),signalSources('Intelligence context only',correlation.intelligenceContext));root.append(card);
+    }
+    if(!correlations.length)heading.append(node('p','No shared-entity correlation matches the retained evidence and search. Unrecognised formats and missing outputs remain gaps.','empty'));
+  }
+  const boundary=panel('Coverage and reasoning boundaries');const list=node('ul');
+  for(const limitation of [...signals.limitations,...(model.limitations||[])])list.append(node('li',limitation));boundary.append(list);root.append(boundary);
+}
+function renderQuality(){
+  const root=$('content');root.replaceChildren();const runs=filteredRuns(),completed=runs.filter(r=>/^(succeeded|completed)$/i.test(r.apiState)),full=completed.filter(r=>r.hasEvidence),gap=completed.length-full.length;
+  renderOverview(root,runs);
+  const hero=panel();hero.append(node('div','OUTPUT REALITY CHECK','eyebrow'),node('h2',completed.length+' completed sessions. '+full.length+' with readable evidence.'));
+  hero.append(node('p',gap?gap+' completed sessions have no readable evidence in this snapshot. Agent transcripts and artifact availability are shown separately below.':'Readable evidence is not a guarantee that an assessment is correct or complete. Intelligence runs still require their own full-report checks.','summary'));
+  const ti=completed.filter(r=>r.isIntelligence);if(ti.length)hero.append(pill(ti.filter(r=>r.reportCount>0).length+' / '+ti.length+' completed TI sessions have a full intelligence report'));
+  root.append(hero);
+  const count=state=>runs.filter(r=>r.classification===state).length;
+  const cards=node('div',undefined,'cards');for(const [label,state,detail] of [['Full reports','report','Substantive intelligence output collected'],['Source unavailable','source-unavailable','Reported by the session summary'],['Detailed output missing','output-missing','Summary refers to an unavailable report'],['Not finished','pending','Snapshot lifecycle state']])cards.append(metric(label,count(state),detail));root.append(cards);
+  const timeline=panel('Collected run outcomes','Chronological sessions across the selected inputs. Colours describe output availability, not security effectiveness.');
+  const stack=node('div',undefined,'stack'),legend=node('div',undefined,'legend');
+  for(const state of Object.keys(labels)){const amount=count(state);if(!amount)continue;const segment=node('span');segment.style.width=(100*amount/Math.max(1,runs.length))+'%';segment.style.background=colors[state];segment.title=labels[state]+': '+amount;stack.append(segment);const key=node('span'),dot=node('span',undefined,'dot');dot.style.background=colors[state];key.append(dot,document.createTextNode(labels[state]+' '+amount));legend.append(key);}
+  timeline.append(stack,legend);const strip=node('div',undefined,'timeline');
+  const ordered=runs.slice().sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
+  ordered.forEach((run,index)=>{const b=node('button',String(index+1));b.style.background=colors[run.classification];b.title=date(run.startedAt)+' / '+labels[run.classification]+' / '+run.id;b.setAttribute('aria-label','Run '+(index+1)+': '+labels[run.classification]);b.onclick=()=>openEvidence(run.id);strip.append(b);});timeline.append(strip);
+  if(ordered.length)timeline.append(node('div',date(ordered[0].startedAt)+' to '+date(ordered[ordered.length-1].startedAt),'micro'));root.append(timeline);
+  if(selected&&selected.reportColumns.length>1&&selected.reportColumns.every(c=>runs.some(r=>r.id===c.sessionId))){
+    const matrix=panel('Which techniques recur across the reports?','Mentioned in the extracted technique table, not validated coverage. A blank cell means not extracted from that report. Mapping differences alone do not establish which report is correct.');
+    if(selected.behaviourRange)matrix.append(pill(selected.behaviourRange.min+' to '+selected.behaviourRange.max+' behaviour rows across '+selected.reportColumns.length+' reports'));
+    const scroll=node('div',undefined,'scroll'),table=node('table',undefined,'presence'),head=node('thead'),tr=node('tr');tr.append(node('th','ATT&CK ID'));
+    selected.reportColumns.forEach((r,i)=>{const th=node('th','R'+(i+1));th.append(node('div',time(r.startedAt),'micro'));th.title=r.sessionId;tr.append(th);});head.append(tr);table.append(head);const body=node('tbody');
+    for(const technique of selected.techniquePresence){const row=node('tr'),id=node('td',technique.id);id.append(node('span',technique.reports+'/'+technique.totalReports,'count'));row.append(id);
+      selected.reportColumns.forEach((column,i)=>{const present=column.techniqueIds.includes(technique.id),cell=node('td'),button=node('button',present?'':'-',present?'present':'');button.setAttribute('aria-label',technique.id+' '+(present?'mentioned':'not extracted')+' in R'+(i+1));button.title=button.getAttribute('aria-label');button.onclick=()=>{const report=sessions.get(column.sessionId).reports.find(r=>r.path===column.path);const match=report.behaviours.find(b=>b.techniqueIds.includes(technique.id));openEvidence(column.sessionId,column.path,match&&match.line);};cell.append(button);row.append(cell);});body.append(row);
+    }table.append(body);scroll.append(table);matrix.append(scroll);root.append(matrix);
+    root.append(comparisonPanel(selected));
+  }
+  const sessionsPanel=panel('Run-by-run evidence','Compare the API lifecycle state with what was collected. Missing source content and missing report artifacts are separate outcomes.');
+  const filters=node('div',undefined,'filters'),search=node('input');search.type='search';search.placeholder='Search run ID, output state or summary';search.setAttribute('aria-label','Search runs');const label=node('label'),checkbox=node('input');checkbox.type='checkbox';label.append(checkbox,document.createTextNode('Show output problems only'));filters.append(search,label);sessionsPanel.append(filters);const target=node('div',undefined,'scroll');target.id='run-table';sessionsPanel.append(target);
+  function renderRuns(){target.replaceChildren();const term=search.value.toLowerCase(),matching=runs.filter(r=>(!checkbox.checked||attention(r))&&[r.id,r.title,r.workflow,r.agents.join(' '),r.summary,r.apiState,labels[r.classification]].join(' ').toLowerCase().includes(term));
+    const table=node('table'),head=node('thead'),tr=node('tr');for(const title of ['Run started / workflow','API state','Collected outcome','Report content','Evidence'])tr.append(node('th',title));head.append(tr);table.append(head);const body=node('tbody');
+    for(const run of matching){const row=node('tr'),when=node('td',date(run.startedAt));when.append(node('div',run.workflow+' / '+run.id,'micro'));const state=node('td');state.append(pill(run.apiState));const outcome=node('td');outcome.append(badge(run.classification));for(const issue of run.collectionIssues)outcome.append(node('div',issue,'small'));const report=run.reports[0],details=node('td',report?report.behaviours.length+' behaviours / '+report.indicators.length+' indicators':run.artifactCount+' collected artifacts');const evidence=node('td');evidence.append(sourceButton(run.id,null,null,'Inspect run'));row.append(when,state,outcome,details,evidence);body.append(row);}table.append(body);target.append(table);if(!matching.length)target.append(node('p','No runs match these filters.','empty'));}
+  search.oninput=renderRuns;checkbox.onchange=renderRuns;renderRuns();root.append(sessionsPanel);renderAgentRuns(root,runs);
+}
+function comparisonPanel(campaign){
+  const section=panel('Compare two extractions','Set differences in extracted technique IDs and indicators. These are differences between agent reports, not evidence of changes in the environment.'),filters=node('div',undefined,'filters'),a=node('select'),b=node('select');
+  a.setAttribute('aria-label','Report A');b.setAttribute('aria-label','Report B');
+  for(const [i,r] of campaign.reportColumns.entries()){for(const select of [a,b]){const option=node('option','R'+(i+1)+' / '+time(r.startedAt));option.value=String(i);select.append(option);}}
+  a.value=String(campaign.reportColumns.length-1);b.value=String(campaign.reportColumns.length-2);filters.append(node('label','Report A'),a,node('label','Report B'),b);section.append(filters);const target=node('div',undefined,'compare-grid');target.id='report-comparison';section.append(target);
+  function update(){target.replaceChildren();const ra=campaign.reportColumns[Number(a.value)],rb=campaign.reportColumns[Number(b.value)];for(const [label,x,y] of [['Only in A',ra,rb],['Only in B',rb,ra]]){const box=node('div',undefined,'compare-box');box.append(node('h3',label));const difference=x.techniqueIds.filter(id=>!y.techniqueIds.includes(id));box.append(node('p',difference.length?'Extracted techniques:':'No unique technique IDs.','small'));for(const id of difference)box.append(pill(id));const iocs=x.indicators.filter(value=>!y.indicators.includes(value));box.append(node('p',iocs.length?iocs.length+' unique indicator values.':'No unique indicator values.','small'),sourceButton(x.sessionId,x.path,null,'Read this report'));target.append(box);}}
+  a.onchange=update;b.onchange=update;update();return section;
+}
+let selectedLoopId=null;
+function loopMatches(group){
+  const term=$('loop-search').value.trim().toLowerCase(),flow=$('loop-flow').value,evidence=$('loop-evidence').value;
+  const mapped=group.coverage.some(stage=>stage.status==='evidence-to-review');
+  return (!term||[group.title,...group.sessionIds,...group.workflows,...group.inputTags].join(' ').toLowerCase().includes(term))&&
+    (!flow||group.flow===flow)&&(!evidence||(evidence==='mapped'&&mapped)||(evidence==='unmapped'&&!mapped)||
+    (evidence==='gaps'&&group.collectionIssues.length>0)||(evidence==='explicit'&&group.correlationBasis==='explicit-loop-id'));
+}
+function loopBasis(group){
+  return group.correlationBasis==='explicit-loop-id'?'Explicit loop ID (declared link)':group.correlationBasis==='shared-incident-input'?'Shared incident input (candidate only)':'Session-scoped; not linked';
+}
+function loopFlow(group){
+  return group.flow+' / '+(group.flowBasis==='explicit-tag'?'explicit tag':group.flowBasis==='workflow-derived'?'workflow-derived, not confirmed':'not established');
+}
+function loopStageCoverage(groups,stageId){
+  const counts={review:0,notObserved:0,notAssessed:0,total:groups.length};
+  for(const group of groups){
+    const stage=group.coverage.find(item=>item.stageId===stageId);
+    if(stage.status==='evidence-to-review')counts.review++;
+    else if(stage.status==='not-observed')counts.notObserved++;
+    else if(stage.status==='not-assessed')counts.notAssessed++;
+  }
+  return counts;
+}
+function renderLoopModel(groups){
+  const figure=node('figure',undefined,'panel loop-model'),caption=node('figcaption'),title=node('h2','From faster tasks to verified outcomes');
+  title.id='loop-model-title';figure.setAttribute('aria-labelledby',title.id);
+  caption.append(title,node('p','Target operating model + current evidence overlay. Arrows show design intent, not observed orchestration or completed handoffs. Not every flow requires every stage.'));
+  figure.append(caption);
+  const coordination=node('div',undefined,'loop-coordination');
+  coordination.append(node('strong','Coordinate by evidence, not by a fixed tier ladder'),node('p','Bring in the next capability when scope, uncertainty or policy requires it. Human authority and policy govern every stage; required approvals remain.'));
+  figure.append(coordination);
+  const track=node('ol',undefined,'loop-model-track');
+  const targets=[
+    ['sense','Agent-assisted intake','Find relevant signals across alerts, intelligence and exposure.'],
+    ['understand','Agent-assisted analysis','Build a shared investigation scope and retain the supporting evidence.'],
+    ['decide','Human judgement','Approve, reject or redirect based on evidence and explicit decision rights.'],
+    ['engineer','Agent-assisted design','Turn findings into candidate detections, hunts and ranked fixes.'],
+    ['act','Accountable execution','Apply approved changes through an identified owner and record what changed.'],
+    ['verify','Evidence-based reassessment','Reassess the same scope and demonstrate that the original finding is resolved.'],
+    ['learn','Retain and reuse','Carry decisions, verified outcomes and feedback into subsequent work.']
+  ];
+  for(const [stageId,role,target] of targets){
+    const definition=payload.report.operationalLoops.stages.find(stage=>stage.id===stageId),counts=loopStageCoverage(groups,stageId);
+    const item=node('li',undefined,'loop-model-node'+(['decide','act'].includes(stageId)?' human':''));
+    item.append(node('div',role,'loop-model-role'),node('h3',definition.title),node('p',target,'loop-model-target'));
+    const evidence=node('div',undefined,'loop-model-evidence'+(counts.review?' review':''));
+    evidence.append(node('span','Current filtered snapshot'));
+    if(!counts.total)evidence.append(node('strong','No matching groups'),node('span','Target model only; no evidence overlay.'));
+    else if(counts.review)evidence.append(node('strong',counts.review+' / '+counts.total+' groups to review'),node('span','Mapped artifacts, not completed stages.'),node('span','Not observed: '+counts.notObserved+'; not assessed: '+counts.notAssessed+'.'));
+    else if(counts.notAssessed===counts.total)evidence.append(node('strong','Not assessed'),node('span','Required proof not collected ('+counts.total+' groups).'));
+    else evidence.append(node('strong','No mapped evidence'),node('span','Not observed: '+counts.notObserved+'; not assessed: '+counts.notAssessed+' ('+counts.total+' groups).'));
+    item.append(evidence);track.append(item);
+  }
+  figure.append(track,node('div','Feedback: Learn -> Sense / Understand / Engineer. Reuse evidenced outcomes and decisions; a repeat run alone does not establish learning.','loop-feedback'));
+  const changes=node('div',undefined,'loop-model-changes');
+  for(const [heading,description] of [
+    ['Less queue dependence (intended)','Route exceptions by evidence and authority rather than mandatory tier-by-tier escalation. Keep necessary human decisions.'],
+    ['Less repeated analysis (intended)','Carry scoped findings and engineering forward instead of restarting the same work for every alert.'],
+    ['No closure without proof (target)','Link accountable action to same-scope reassessment, then feed the outcome into future decisions.']
+  ]){
+    const change=node('div',undefined,'loop-model-change');change.append(node('strong',heading),node('p',description));changes.append(change);
+  }
+  figure.append(changes,node('p','Validation gate: this snapshot does not prove shorter queues, lower effort/cost or reduced risk. Those claims need linked handoff, decision, execution, verification and reuse records, plus a comparable baseline. Stage counts are group coverage, not percentages of completion or a single connected loop.','loop-model-validation'));
+  return figure;
+}
+function loopAgentKey(name){return typeof name==='string'?name.replace(/^Global\.(?=Microsoft\.Defender\.)/,''):'';}
+function loopMappedFlows(catalog){
+  const definitions=[
+    {id:'alert-led',title:'Alert-led',playbooks:['triage-security-copilot','investigate-incident'],roles:['OutcomeAssuranceAgent'],note:'Triage and investigation dependencies come from the catalog. Outcome Assurance is mapped to resolution checking as an operating role.'},
+    {id:'threat-led',title:'Threat-led',playbooks:['analyze-article','proactive-protection'],roles:[],note:'Threat-intelligence and proactive-protection dependencies come directly from the catalog.'},
+    {id:'exposure-led',title:'Exposure-led',playbooks:['run-reconnaissance','prioritize-posture','assess-identity-risk','find-fix-web-app-security-risks','pr-mfa'],roles:['OutcomeAssuranceAgent'],note:'Exposure, posture and identity dependencies come from the catalog. Outcome Assurance is mapped to follow-up checking.'},
+    {id:'hunt-led',title:'Hunt-led',playbooks:[],roles:['InvestigationAgent','DetectionAuthoringAgent','ReconAgent'],note:'Role-based mapping to registered agents; no dedicated hunt playbook is assumed. Agent activity alone does not establish a hunt.'},
+    {id:'validation-led',title:'Validation-led',playbooks:[],roles:['OutcomeAssuranceAgent','ReconAgent','WebAppRedAgent'],note:'Role-based mapping for reassessment, not evidence of verification. Active testing requires explicit authorization; no schedule or approval is inferred.'}
+  ];
+  return definitions.map(flow=>{
+    const playbooks=catalog.playbooks.filter(item=>flow.playbooks.includes(item.id)),references=new Map();
+    for(const playbook of playbooks)for(const name of playbook.agentDefinitions){
+      const key=loopAgentKey(name);if(!references.has(key))references.set(key,{key,playbooks:[],role:false});
+      references.get(key).playbooks.push(playbook.displayName);
+    }
+    for(const name of flow.roles){
+      const key='Microsoft.Defender.'+name;if(!references.has(key))references.set(key,{key,playbooks:[],role:false});
+      references.get(key).role=true;
+    }
+    const agents=[...references.values()].map(reference=>{
+      const instances=catalog.agents.filter(agent=>loopAgentKey(agent.definitionName)===reference.key);
+      return {...reference,instances,name:instances[0]?.displayName||reference.key,
+        status:!instances.length?'Not in saved registry':instances.some(agent=>agent.enabled===true)?'Enabled in saved registry':
+          instances.every(agent=>agent.enabled===false)?'Disabled in saved registry':'Registry state unknown'};
+    });
+    return {...flow,playbooks,agents};
+  });
+}
+function loopAgentActivity(agent,sessions){
+  return sessions.flatMap(session=>(session.agentRuns||[]).filter(run=>
+    run.agentId?agent.instances.some(instance=>instance.id===run.agentId):
+      loopAgentKey(run.agentDefinitionName||run.agent)===agent.key
+  ).map(run=>({session,run})));
+}
+function renderLoopPlaybooks(groups){
+  const section=panel('Agent-linked playbooks','Available agents mapped to operating flows, with observed runs and retained outputs shown separately. Expand an agent to inspect its activity.');
+  section.id='loop-playbooks';section.setAttribute('aria-label','Agent-linked playbooks');
+  const catalog=payload.report.operationalLoops.agentCatalog;
+  if(!catalog||catalog.status!=='collected'){
+    section.append(node('p','Agent catalog not collected. Refresh the Environment snapshot to retain its playbook definitions and agent registry. Observed runs alone do not establish available agents.','empty'));
+    return section;
+  }
+  const ids=new Set(groups.flatMap(group=>group.sessionIds)),sessions=payload.report.snapshotInsights.sessions.filter(session=>ids.has(session.id));
+  section.append(node('p','Catalog snapshot: '+(catalog.capturedAt?date(catalog.capturedAt):'capture time not retained')+'. Agent dependencies are catalog-backed; additional operating-role mappings are labeled. Enabled does not prove permissions, readiness or completed work. Activity follows the evidence filters and may belong to a different flow.','loop-model-validation'));
+  for(const issue of catalog.issues)section.append(node('p',issue,'small'));
+  const grid=node('div',undefined,'loop-playbook-grid');
+  for(const flow of loopMappedFlows(catalog)){
+    const card=node('article',undefined,'loop-playbook');card.setAttribute('data-flow',flow.id);card.append(node('h3',flow.title));
+    const body=node('div',undefined,'loop-playbook-body');
+    body.append(node('p',flow.note,'small'));
+    const playbooks=node('details',undefined,'loop-catalog-detail'),summary=node('summary',flow.playbooks.length+' catalog playbooks');
+    playbooks.append(summary);
+    for(const playbook of flow.playbooks){
+      const item=node('div',undefined,'loop-catalog-item');item.append(node('strong',playbook.displayName),node('code',playbook.id),
+        node('p',playbook.acceptedInputTypes.length?'Input types: '+playbook.acceptedInputTypes.join(', '):'No input types advertised.','micro'));playbooks.append(item);
+    }
+    if(!flow.playbooks.length)playbooks.append(node('p','No dedicated catalog playbook mapped; the agents below are mapped by operating role.','small'));
+    body.append(playbooks);
+    const contributingSessions=new Map();
+    for(const agent of flow.agents){
+      const activity=loopAgentActivity(agent,sessions),details=node('details',undefined,'loop-mapped-agent'),heading=node('summary');
+      heading.append(node('strong',agent.name),node('span',agent.status,'loop-agent-status'),node('span',activity.length+' observed runs in matching sessions','micro'));details.append(heading);
+      details.append(node('p',agent.playbooks.length?'Catalog dependency: '+agent.playbooks.join(', '):'Operating-role mapping (not a declared playbook dependency).','small'),node('code',agent.key,'loop-agent-id'));
+      if(agent.role&&agent.playbooks.length)details.append(node('p','Also mapped as an operating role.','small'));
+      for(const instance of agent.instances)details.append(node('div',instance.id+' / '+(instance.enabled===true?'Enabled':instance.enabled===false?'Disabled':'Unknown state'),'loop-agent-id'));
+      if(!activity.length)details.append(node('p','No matching runs retained. This does not mean the agent has never run.','small'));
+      for(const {session,run} of activity){
+        contributingSessions.set(session.id,session);
+        const item=node('div',undefined,'loop-agent-run');
+        item.append(node('strong',session.workflow+' / '+(run.state||'Unknown run state')),node('div',run.id||'Run ID not retained','micro'));
+        item.append(sourceButton(session.id,run.transcriptPath||null,run.transcriptPath?1:null,run.transcriptPath?'Inspect run transcript':'Inspect session (no retained transcript)'));
+        if(run.error||run.messagesTruncated)item.append(node('p','Run context has collection gaps or truncated messages.','small'));
+        details.append(item);
+      }
+      body.append(details);
+    }
+    if(!flow.agents.length)body.append(node('p','No agent dependencies mapped from the saved catalog.','empty'));
+    const outputs=node('details',undefined,'loop-catalog-detail');outputs.append(node('summary','Shared session outputs ('+contributingSessions.size+' sessions)'));
+    outputs.append(node('p','These outputs belong to sessions containing the mapped agents; they are not attributed to individual runs or proof that this flow executed.','small'));
+    for(const session of contributingSessions.values()){
+      const item=node('div',undefined,'loop-catalog-item');item.append(sourceButton(session.id,null,null,session.title||session.id));
+      const artifacts=session.artifacts.filter(artifact=>artifact.kind==='artifact');
+      for(const artifact of artifacts)item.append(sourceButton(session.id,artifact.path,1,'Inspect output: '+artifact.path));
+      if(!artifacts.length)item.append(node('p','No output artifacts retained for this session.','small'));
+      outputs.append(item);
+    }
+    body.append(outputs);card.append(body);grid.append(card);
+  }
+  section.append(grid,node('p','Inspecting these mappings does not launch agents, submit prompts, execute actions or certify outcomes. Multiple cards may reference the same agent and run; their counts are not additive.','small'));
+  return section;
+}
+function loopDemoSankeyData(){
+  const stages=[
+    ['sense','Triage / protection',1000,'progress'],['agent-check','Agentic checks',1000,'automated'],
+    ['understand','Flagged investigation',100,'flagged'],
+    ['decide','Decide',40,'human'],['engineer','Engineer',20,'progress'],
+    ['act','Human-led act',15,'human'],['verify','Recheck',12,'automated'],['learn','Selected learning',2,'outcome']
+  ];
+  const stops=[
+    ['defender-resolved','Defender resolution confirmed',700,2,'outcome',180],
+    ['disposition-checked','No-action disposition checked',200,2,'disposition',410],
+    ['investigation-closed','Investigation closed',60,3,'disposition',330],
+    ['approval','Await approval',20,4,'waiting',330],['owner','Await owner',5,5,'waiting',330],
+    ['execution-failed','Execution failed',3,6,'failed',330],['verified-closed','Verified closure',10,7,'outcome',330]
+  ];
+  return {
+    total:1000,
+    nodes:[
+      ...stages.map(([id,label,value,kind],column)=>({id,label,value,kind,x:28+column*180,y:90})),
+      ...stops.map(([id,label,value,column,kind,y])=>({id,label,value,kind,x:28+column*180,y}))
+    ],
+    links:[
+      {source:'sense',target:'agent-check',value:100,kind:'flagged'},
+      {source:'sense',target:'agent-check',value:700,kind:'outcome'},
+      {source:'sense',target:'agent-check',value:200,kind:'disposition'},
+      ...stages.slice(2).map(([target,,value,kind],index)=>({source:stages[index+1][0],target,value,kind:['outcome','flagged','automated'].includes(kind)?kind:'progress'})),
+      ...stops.map(([target,,value,column,kind])=>({source:stages[column-1][0],target,value,kind}))
+    ]
+  };
+}
+function renderLoopDemoSankey(){
+  const data=loopDemoSankeyData(),figure=node('figure',undefined,'panel loop-demo-sankey');
+  figure.setAttribute('aria-labelledby','loop-demo-title');figure.setAttribute('data-demo','true');
+  figure.append(node('div','DEMO ONLY - FICTIONAL DATA - NOT YOUR TENANT','loop-demo-banner'));
+  const caption=node('figcaption'),heading=node('h2','How work could flow - demo Sankey');heading.id='loop-demo-title';
+  caption.append(heading,node('p','All 1,000 imagined work items pass through agentic resolution / disposition checks, not just the small investigation branch. The large band is split by check outcome: 700 Defender resolutions confirmed, 200 no-action dispositions checked, and 100 unresolved or uncertain items flagged for investigation. Defender can block or contain threats before or during triage; checks assess the result rather than assume a block means resolution. Colors show fictional check outcomes, not predictions at detection. Only 2 items are selected for explicit learning. Fictional counts, not benchmarks. Band widths represent item counts, not agent runs, elapsed time or measured performance. This demo is independent of snapshot filters and excluded from report JSON and coverage exports.'));
+  figure.append(caption);
+  const colors={progress:'#4b8aaa',human:'#7855a1',automated:'#167d8d',flagged:'#b17b18',waiting:'#b17b18',failed:'#b44b4b',disposition:'#77838e',outcome:'#287c65'};
+  const svgNode=(tag,attributes={},text)=>{
+    const element=document.createElementNS('http://www.w3.org/2000/svg',tag);
+    for(const [name,value] of Object.entries(attributes))element.setAttribute(name,String(value));
+    if(text!==undefined)element.textContent=text;return element;
+  };
+  const svg=svgNode('svg',{viewBox:'0 0 1460 570',width:1460,height:570,class:'loop-demo-svg',role:'img','aria-labelledby':'loop-demo-svg-title loop-demo-svg-desc'});
+  svg.append(svgNode('title',{id:'loop-demo-svg-title'},'DEMO ONLY: fictional operating-flow Sankey'),
+    svgNode('desc',{id:'loop-demo-svg-desc'},'All 1,000 fictional work items pass from Triage / protection to Agentic checks in three colored bands: 700 Defender resolutions confirmed, 200 no-action dispositions checked, and 100 unresolved or uncertain items flagged for investigation. Checks apply across the whole cohort. Early Defender blocking does not wait for investigation or a human decision. The agentic system checks evidence of resolution or disposition and flags gaps; action success alone is not proof of resolution. Of 100 investigated items, 60 close and 40 reach Decide. 20 await approval and 20 reach Engineer. 5 await an owner and 15 reach human-led action. 3 actions fail and 12 reach agentic Recheck; 10 then reach verified closure and 2 are selected for explicit learning. All exact counts are in the fictional flow table below. No tenant evidence is used.'));
+  svg.append(svgNode('text',{x:730,y:385,'text-anchor':'middle',class:'demo-watermark'},'DEMO ONLY'));
+  const index=new Map(data.nodes.map(item=>[item.id,item])),outgoing=new Map(),incoming=new Map(),scale=260/data.total;
+  for(const link of data.links){
+    const source=index.get(link.source),target=index.get(link.target),sx=source.x+16,tx=target.x,mid=(sx+tx)/2;
+    const sy=source.y+(outgoing.get(source.id)||0)*scale,ty=target.y+(incoming.get(target.id)||0)*scale,h=link.value*scale;
+    outgoing.set(source.id,(outgoing.get(source.id)||0)+link.value);incoming.set(target.id,(incoming.get(target.id)||0)+link.value);
+    const path=svgNode('path',{d:`M${sx},${sy} C${mid},${sy} ${mid},${ty} ${tx},${ty} L${tx},${ty+h} C${mid},${ty+h} ${mid},${sy+h} ${sx},${sy+h} Z`,fill:colors[link.kind],'fill-opacity':.42});
+    path.append(svgNode('title',{},`DEMO ONLY: ${source.label} -> ${target.label}: ${link.value} fictional work items`));svg.append(path);
+  }
+  for(const item of data.nodes){
+    const rectangle=svgNode('rect',{x:item.x,y:item.y,width:16,height:item.value*scale,rx:3,fill:colors[item.kind]});
+    rectangle.append(svgNode('title',{},`DEMO ONLY: ${item.label}: ${item.value} fictional work items`));svg.append(rectangle);
+    if(item.y===90)svg.append(svgNode('text',{x:item.x,y:43,class:'demo-stage-label'},item.label),svgNode('text',{x:item.x,y:65},item.value+' demo items'));
+    else svg.append(svgNode('text',{x:item.x+24,y:item.y+12},item.label),svgNode('text',{x:item.x+24,y:item.y+32},item.value+' demo items'));
+  }
+  const scroll=node('div',undefined,'loop-demo-scroll');scroll.setAttribute('tabindex','0');scroll.setAttribute('role','region');scroll.setAttribute('aria-label','Fictional Sankey diagram; scroll horizontally on smaller screens');scroll.append(svg);figure.append(scroll);
+  const legend=node('div',undefined,'loop-demo-legend');
+  for(const [kind,label] of [['progress','Progress'],['human','Human authority / accountable action'],['automated','Agentic checks / rechecks'],['flagged','Unresolved / uncertain: flagged'],['waiting','Review / waiting'],['failed','Failed / rework'],['disposition','Checked disposition / investigation closure'],['outcome','Confirmed resolution / verified closure / selected learning (fictional)']]){
+    const item=node('span'),swatch=node('i');swatch.style.backgroundColor=colors[kind];item.append(swatch,node('span',label));legend.append(item);
+  }
+  const responses=node('div',undefined,'loop-demo-responses');
+  for(const [title,description] of [
+    ['Defender protects; agents check - all 1,000 items','Defender can block a malicious file or quarantine it, or contain a device, before or during triage where supported and permitted. In this target model, the agentic system checks response evidence and reassesses the same scope, without waiting for a later investigation or human decision.'],
+    ['Different outcomes within the large band','700: Defender resolution confirmed by agentic checks. 200: no-action disposition checked, not a claim of risk reduction. 100: unresolved, failed, missing-evidence or uncertain cases flagged for investigation. Insufficient proof must be flagged, not silently treated as resolved.'],
+    ['Flag, investigate, act and recheck','Flagged items enter deeper investigation and policy-governed follow-up. Of 15 human-led actions, 3 fail and need review; 12 return to agentic rechecking. The early-response path bypasses later human-led stages, not policy or approval requirements; action success alone is not verified resolution.']
+  ]){const card=node('section',undefined,'loop-demo-response');card.append(node('h3',title),node('p',description));responses.append(card);}
+  figure.append(legend,responses,node('p','Agentic checking across all items is a proposed responsibility in this target model, not observed or implemented orchestration in this report. Defender examples are illustrative, not a claim that automation is enabled or supported for every tenant, entity or action. Actual responses depend on product capabilities, configuration, permissions and required approvals. Downstream bands are intentionally thin and use the same linear scale. Verified closure and selected learning are separate branches. Routine evidence retention is not an explicit learning workflow. Waiting is not failure, and a checked no-action disposition or investigation closure is not proof of risk reduction. This is one fictional alert-led route, not a mandatory sequence. No queue duration, cost saving or real outcome is asserted.'));
+  const details=node('details'),summary=node('summary','View fictional flow counts (demo only)'),table=node('table'),head=node('thead'),row=node('tr');
+  for(const label of ['From (demo)','To (demo)','Fictional work items'])row.append(node('th',label));
+  head.append(row);table.append(head);const body=node('tbody');
+  for(const link of data.links){const row=node('tr');row.append(node('td',index.get(link.source).label),node('td',index.get(link.target).label),node('td',String(link.value)));body.append(row);}
+  table.append(body);details.append(summary,table);figure.append(details,node('p','END OF DEMO - real snapshot evidence resumes below. The fictional Sankey does not alter any evidence or outcome metric.','loop-demo-end'));
+  return figure;
+}
+function renderLoopDetail(group){
+  const model=payload.report.operationalLoops,detail=panel('Evidence group: '+group.title,'Review the underlying evidence. Stage completion, accountable ownership and verified outcomes are not established by this report.');
+  detail.id='loop-detail';detail.classList.add('loop-detail');
+  detail.append(node('p','Source sessions: '+group.sessionIds.join(', '),'small'));
+  detail.append(node('p',loopBasis(group)+' / '+loopFlow(group),'small'),node('p','Latest contributing run started: '+date(group.latestRunStartedAt)+'. This is not a handoff timestamp.','small'));
+  detail.append(node('p','Owner: not recorded. Verified outcome: not assessed. No closure or waiting-time calculation is available.','small'));
+  for(const issue of [...group.issues,...group.collectionIssues])detail.append(node('p',issue,'small'));
+  for(const definition of model.stages){
+    const coverage=group.coverage.find(stage=>stage.stageId===definition.id),section=node('div',undefined,'loop-stage-detail');
+    section.append(node('h3',definition.title),node('p',definition.requirement,'small'));
+    if(coverage.sources.length){
+      section.append(node('p','Mapped artifacts available for review. Their presence does not prove this stage was completed.','small'));
+      for(const source of coverage.sources)section.append(sourceButton(source.sessionId,source.path,source.line,source.workflow+' / '+source.path+' / '+source.sessionId));
+    }else section.append(node('p',coverage.status==='not-assessed'?'Not assessed: the required structured outcome or decision records are not collected here.':'No stage-specific artifact evidence mapped in this snapshot. This does not establish that no work occurred.','small'));
+    detail.append(section);
+  }
+  const context=panel('All readable sources','Transcripts and unavailable-output summaries are context only, not proof of a stage or human decision.');
+  for(const source of group.sources)context.append(sourceButton(source.sessionId,source.path,source.line,source.kind+' / '+source.path+' / '+source.sessionId));
+  if(!group.sources.length)context.append(node('p','No readable artifacts or transcripts were retained for this group.','empty'));
+  detail.append(context);return detail;
+}
+function renderLoops(){
+  const model=payload.report.operationalLoops,root=$('content'),groups=model.groups.filter(loopMatches);root.replaceChildren();
+  $('loop-count').textContent=groups.length+' of '+model.groups.length+' evidence groups';
+  const intro=panel('From agent activity to evidenced outcomes','This first version maps retained artifacts to stages for review. It does not certify completed stages or completed loops. Groups without explicit loop IDs remain candidates or separate sessions.');
+  const cards=node('div',undefined,'cards');cards.append(metric('Evidence groups',groups.length,'Filtered groups, not confirmed loops'),metric('Explicit loop IDs',groups.filter(g=>g.correlationBasis==='explicit-loop-id').length,'Declared links, not verified closure'),metric('With mapped artifacts',groups.filter(g=>g.coverage.some(s=>s.status==='evidence-to-review')).length,'Artifacts to review; not completed stages'),metric('With collection gaps',groups.filter(g=>g.collectionIssues.length>0).length,'Missing collection evidence'));
+  intro.append(cards);root.append(intro);
+  root.append(renderLoopModel(groups));
+  root.append(renderLoopPlaybooks(groups));
+  root.append(renderLoopDemoSankey());
+  const outcomes=panel('Outcome metrics: not yet measurable',model.unavailableMetrics.reason);
+  outcomes.append(node('p','Verified risk reductions: not calculated. Closure rate: not calculated. Handoff dwell: not calculated. These are unknown, not zero.','small'));root.append(outcomes);
+  const section=panel('Stage evidence coverage','Review = mapped readable artifacts, not completed work. Not observed = no mapped evidence. Not assessed = required decision or outcome records are not collected. Not every flow requires all seven stages.');
+  const wrap=node('div',undefined,'scroll'),table=node('table',undefined,'loop-table'),head=node('thead'),tr=node('tr');
+  for(const title of ['Evidence group / correlation','Possible entry flow',...model.stages.map(stage=>stage.title)])tr.append(node('th',title));
+  head.append(tr);table.append(head);const body=node('tbody');
+  for(const group of groups){
+    const row=node('tr'),name=node('td'),button=node('button',group.title,'link');
+    button.onclick=()=>{selectedLoopId=group.id;renderLoops();$('loop-detail').scrollIntoView({block:'start'});};
+    name.append(button,node('div',group.sessionCount+' sessions / '+group.agentRunCount+' agent runs','micro'),node('div',loopBasis(group),'small'));
+    if(group.collectionIssues.length)name.append(node('div','Collection gaps','small'));
+    row.append(name,node('td',loopFlow(group)));
+    for(const stage of group.coverage){
+      const cell=node('td'),text=stage.status==='evidence-to-review'?'Review '+stage.sources.length:stage.status==='not-assessed'?'Not assessed':'Not observed';
+      const badge=node('span',text,'loop-stage'+(stage.status==='evidence-to-review'?' review':''));
+      badge.title=model.stages.find(s=>s.id===stage.stageId).requirement;cell.append(badge);row.append(cell);
+    }
+    body.append(row);
+  }
+  table.append(body);wrap.append(table);section.append(wrap);if(!groups.length)section.append(node('p','No evidence groups match these filters.','empty'));root.append(section);
+  const selected=groups.find(group=>group.id===selectedLoopId);if(selected)root.append(renderLoopDetail(selected));
+  const boundaries=panel('Correlation and evidence boundaries'),list=node('ul');for(const limitation of model.limitations)list.append(node('li',limitation));boundaries.append(list);root.append(boundaries);
+}
+$('page-title').textContent=loops?'Operational Loops & Outcomes':systemic?'Systemic Threat Signals':quality?'Freshness & Run Quality':'Operational Briefing';document.title='Perception | '+$('page-title').textContent;
+$('page-subtitle').textContent=loops?'Trace retained evidence across the operating loop without treating agent activity as verified risk reduction.':systemic?'Connections across agentic findings that warrant a wider investigation.':quality?'Evidence age, output availability and agent execution across all workflows.':'The lay of the land from investigations, triage, intelligence and every collected agentic workflow.';
+$(loops?'loops-nav':systemic?'systemic-nav':quality?'quality-nav':'briefing-nav').classList.add('active');
+if(location.protocol==='file:')for(const [id,file] of [['briefing-nav','Perception-Threat-Protection.html'],['quality-nav','Perception-Assurance-Freshness.html'],['loops-nav','Perception-Operational-Loops.html'],['systemic-nav','Perception-Systemic-Threat-Signals.html'],['behavior-nav','Perception-Agent-Behavior-Analysis.html'],['environment-nav','Perception-Live-Environment.html']])$(id).href=file;
+if(systemic){$('operational-filters').hidden=true;$('campaign-picker').hidden=true;$('signal-filters').hidden=false;}
+if(loops){document.body.classList.add('loop-view');$('operational-filters').hidden=true;$('campaign-picker').hidden=true;$('loop-filters').hidden=false;$('export').textContent='Export coverage';}
+$('snapshot').textContent='Snapshot collected '+date(insights.snapshotGeneratedAt)+' / '+insights.sessionCount+' retained sessions / '+insights.artifactCount+' artifacts';
+$('scope-note').textContent=insights.scopeNote+' Security claims and recommended actions remain attributed to the source report.';
+for(const [id,values] of [['workflow',insights.sessions.map(r=>r.workflow)],['agent',insights.sessions.flatMap(r=>r.agents)]]){
+  for(const value of [...new Set(values)].sort()){const option=node('option',value);option.value=value;$(id).append(option);}
+}
+function refreshGroups(){
+  const ids=new Set(baseRuns().map(r=>r.id)),picker=$('campaign');picker.replaceChildren(node('option','All incidents and inputs'));picker.options[0].value='';
+  for(const group of insights.groups.filter(g=>g.sessionIds.some(id=>ids.has(id)))){const option=node('option',group.workflow+' / '+(group.title||group.latestSessionId)+' / '+(group.explicitCorrelation?group.inputTags.join(' / '):group.latestSessionId));option.value=group.id;picker.append(option);}
+  if(selectedGroup&&selectedGroup.sessionIds.some(id=>ids.has(id)))picker.value=selectedGroup.id;else{selectedGroup=null;selected=null;}
+}
+function render(){$('group-note').textContent=(selectedGroup?(selectedGroup.explicitCorrelation?'Grouped by exact workflow and input tags':'Session-scoped; no unambiguous input correlation'):'All matching workflows and inputs')+($('agent').value?' / Session findings for runs involving the selected agent':'');if(loops)renderLoops();else if(systemic)renderSystemic();else if(quality)renderQuality();else renderBriefing();}
+for(const id of ['workflow','agent','period','outcome'])$(id).onchange=()=>{refreshGroups();render();};
+$('campaign').onchange=()=>{selectedGroup=insights.groups.find(c=>c.id===$('campaign').value)||null;selected=selectedGroup?insights.campaigns.find(c=>c.id===selectedGroup.id)||null:null;render();};
+$('signal-search').oninput=render;$('signal-kind').onchange=render;
+for(const id of ['loop-search','loop-flow','loop-evidence'])$(id)[id==='loop-search'?'oninput':'onchange']=render;
+$('export').onclick=()=>{
+  if(loops){
+    const model=payload.report.operationalLoops;
+    download({generatedAt:payload.report.generatedAt,snapshotCollectedAt:insights.snapshotGeneratedAt,mappingVersion:model.mappingVersion,filters:{search:$('loop-search').value,flow:$('loop-flow').value,evidence:$('loop-evidence').value},groups:model.groups.filter(loopMatches),stages:model.stages,unavailableMetrics:model.unavailableMetrics,limitations:model.limitations},'Perception-Operational-Loops-Coverage.json');
+  }else if(systemic){
+    const signals=payload.report.systemicSignals,kind=$('signal-kind').value;
+    download({...signals,filters:{search:$('signal-search').value,kind},correlations:kind==='hypotheses'?[]:signals.correlations.filter(signalMatches),hypotheses:kind==='correlations'?[]:signals.hypotheses.filter(signalMatches),modelSynthesis:{...signals.modelSynthesis,hypotheses:kind==='correlations'?[]:(signals.modelSynthesis.hypotheses||[]).filter(signalMatches)}},'Perception-Systemic-Threat-Signals.json');
+  }else download({asOf:insights.asOf,scopeNote:insights.scopeNote,filters:{workflow:$('workflow').value,agent:$('agent').value,period:$('period').value,outcome:$('outcome').value,groupId:selectedGroup&&selectedGroup.id},sessions:filteredRuns()},quality?'Perception-Run-Quality.json':'Perception-Operational-Briefing.json');
+};
+refreshGroups();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+# Tenant-generated reports and snapshots.
+Perception-*.html
+!*.template.html
+Perception-*.json
+Perception-*.csv
+
+# Local configuration and credentials.
+perception.config.json
+local.settings.json
+token.txt
+*token*.txt
+*.token
+*.pem
+*.key
+*.pfx
+*.p12
+.env*
+.azure/
+.azure-*/
+
+# Build output, dependencies, and local diagnostics.
+dist/
+node_modules/
+testResults.xml
+*.log
+*.tmp
+*.bak

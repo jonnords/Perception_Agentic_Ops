@@ -1,0 +1,504 @@
+openapi: 3.0.3
+info:
+  title: Perception Live Environment Local Runner
+  version: 1.0.0
+  license:
+    name: Microsoft private preview terms apply
+    url: https://www.microsoft.com/licensing/terms/
+  description: |
+    Loopback-only companion API for the Perception Live Environment dashboard.
+    The runner acquires a Perception access token through the current Azure CLI
+    login. It is intended for local, single-user use and must not be exposed as
+    a network service.
+servers:
+  - url: http://127.0.0.1:8765
+    description: Default local runner
+security: []
+tags:
+  - name: App
+    description: Serve and monitor the local dashboard.
+  - name: Investigation
+    description: Start a constrained incident-investigation session.
+paths:
+  /:
+    get:
+      tags:
+        - App
+      summary: Open the unified workspace, including setup for a clean installation
+      operationId: getWorkspace
+      responses:
+        "200":
+          description: Local navigation shell; opening it does not collect data or invoke a model
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /environment:
+    get:
+      tags: [App]
+      summary: Open the generated environment explorer
+      operationId: getDashboard
+      responses:
+        "200":
+          description: Generated environment HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /api/workspace:
+    get:
+      tags: [App]
+      summary: Read report availability and setup status without credentials or machine paths
+      operationId: getWorkspaceStatus
+      responses:
+        "200":
+          description: Saved report availability and optional dependency status
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [reports, azureCliAvailable, modelConfigured]
+                properties:
+                  azureCliAvailable:
+                    type: boolean
+                  modelConfigured:
+                    type: boolean
+                  reports:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, title, path, available, modifiedAt, command]
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        path:
+                          type: string
+                        available:
+                          type: boolean
+                        modifiedAt:
+                          type: string
+                          nullable: true
+                        command:
+                          type: string
+  /defender-investigations:
+    get:
+      tags: [App]
+      summary: Open saved Defender investigation comparisons
+      operationId: getDefenderInvestigations
+      responses:
+        "200":
+          description: Generated Defender comparisons HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /assurance-freshness:
+    get:
+      tags:
+        - App
+      summary: Open Run Quality (or the explicitly generated advanced assurance register view)
+      operationId: getAssuranceFreshness
+      responses:
+        "200":
+          description: Generated local assurance freshness HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /threat-protection:
+    get:
+      tags:
+        - App
+      summary: Open Threat Briefing (or the explicitly generated advanced protection register view)
+      operationId: getThreatProtection
+      responses:
+        "200":
+          description: Generated local protection matrix HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /operational-loops:
+    get:
+      tags: [App]
+      summary: Open saved operational loop evidence coverage, not verified outcomes
+      operationId: getOperationalLoops
+      responses:
+        "200":
+          description: Snapshot-scoped stage evidence coverage HTML; no model or collection request
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /systemic-threat-signals:
+    get:
+      tags:
+        - App
+      summary: Open cross-run correlations and unverified systemic-threat hypotheses
+      operationId: getSystemicThreatSignals
+      responses:
+        "200":
+          description: Generated local systemic-signals HTML, including model synthesis when explicitly requested
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /agent-behavior:
+    get:
+      tags:
+        - App
+      summary: Open the existing Perception Agent Behavior Analysis report
+      operationId: getAgentBehaviorAnalysis
+      responses:
+        "200":
+          description: Generated local agent behavior HTML; opening it does not run model analysis
+          content:
+            text/html:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+  /api/health:
+    get:
+      tags:
+        - App
+      summary: Check whether the local runner is ready
+      operationId: getLocalRunnerHealth
+      responses:
+        "200":
+          description: Runner is ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: ready
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+  /api/ai-settings:
+    get:
+      tags: [App]
+      summary: Read saved non-secret model settings and cached Azure CLI identity
+      description: Does not acquire a token, validate model access, collect evidence or invoke a model.
+      operationId: getAiSettings
+      responses:
+        "200":
+          description: Current model configuration and unverified cached CLI account context
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiSettings"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+    post:
+      tags: [App]
+      summary: Save validated AI configuration locally without a model call
+      description: |
+        Accepts 1-16384 bytes of JSON. Atomically replaces the effective configuration
+        file, preserving the top-level Perception tenant pin. No caller-supplied file
+        path or credentials are accepted. The runner reads saved settings immediately.
+        Does not obtain a token, collect evidence or regenerate reports.
+      operationId: saveAiSettings
+      parameters:
+        - $ref: "#/components/parameters/SettingsOrigin"
+        - $ref: "#/components/parameters/SettingsHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [model]
+              properties:
+                model:
+                  $ref: "#/components/schemas/AiModelInput"
+      responses:
+        "200":
+          description: Settings saved; no model call or report generation occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [model, configured, message]
+                properties:
+                  model:
+                    $ref: "#/components/schemas/AiModelInput"
+                  configured:
+                    type: boolean
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+  /api/ai-settings/test:
+    post:
+      tags: [App]
+      summary: Explicit chargeable synthetic model connection test
+      description: |
+        Requires explicit consent for each request and accepts 1-16384 bytes of JSON.
+        Tests the supplied model settings (which need not have been saved) using
+        Azure CLI Entra authentication. Sends one fixed synthetic prompt, no tenant
+        evidence. Does not save settings or regenerate reports. Redirects are rejected.
+        Uses the deployment's default output budget and a 60-second HTTP timeout;
+        timed-out requests may still incur charges. Provider bodies and tokens are
+        never returned. A complete valid connection-check answer is required.
+      operationId: testAiConnection
+      parameters:
+        - $ref: "#/components/parameters/SettingsOrigin"
+        - $ref: "#/components/parameters/SettingsHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [model, consent]
+              properties:
+                model:
+                  $ref: "#/components/schemas/AiModelInput"
+                consent:
+                  type: boolean
+                  enum: [true]
+      responses:
+        "200":
+          description: Synthetic connection check completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [connected, deployment, apiFormat, testedAtUtc, message]
+                properties:
+                  connected:
+                    type: boolean
+                  deployment:
+                    type: string
+                  apiFormat:
+                    type: string
+                    enum: [responses, chat]
+                  testedAtUtc:
+                    type: string
+                    format: date-time
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "502":
+          $ref: "#/components/responses/ErrorResponse"
+  /api/investigate:
+    post:
+      tags:
+        - Investigation
+      summary: Start an incident investigation
+      description: |
+        Starts the `investigate-incident` playbook with one
+        `defenderIncidentId` input. The runner obtains the bearer token through
+        Azure CLI and sends the request to the Production Perception API.
+      operationId: startIncidentInvestigation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentInvestigationRequest"
+            example:
+              incidentId: "560608"
+      responses:
+        "201":
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentInvestigationResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "403":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+        "502":
+          $ref: "#/components/responses/ErrorResponse"
+components:
+  parameters:
+    SettingsOrigin:
+      name: Origin
+      in: header
+      required: true
+      description: Must exactly match the local runner origin, including its port.
+      schema:
+        type: string
+        example: http://127.0.0.1:8765
+    SettingsHeader:
+      name: X-Perception-Settings
+      in: header
+      required: true
+      schema:
+        type: string
+        enum: ["1"]
+  schemas:
+    AiModel:
+      type: object
+      additionalProperties: false
+      required: [endpoint, deployment]
+      properties:
+        endpoint:
+          type: string
+          description: Complete HTTPS Responses or chat-completions URL on an allowed Azure resource host, port 443; only an optional api-version query is accepted. Empty if not yet configured.
+        deployment:
+          type: string
+        apiFormat:
+          type: string
+          enum: [responses, chat]
+          default: responses
+        tenantId:
+          type: string
+          description: Tenant GUID or empty to inherit the Perception tenant pin, then the current CLI context.
+          default: ""
+        tokenResource:
+          type: string
+          enum: [https://cognitiveservices.azure.com, https://ai.azure.com]
+          default: https://cognitiveservices.azure.com
+    AiModelInput:
+      allOf:
+        - $ref: "#/components/schemas/AiModel"
+        - type: object
+          properties:
+            endpoint:
+              type: string
+              minLength: 1
+            deployment:
+              type: string
+              minLength: 1
+    AiSettings:
+      type: object
+      required: [model, configured, authentication, effectiveTenantId]
+      properties:
+        model:
+          $ref: "#/components/schemas/AiModel"
+        configured:
+          type: boolean
+          description: Both endpoint and deployment are present; does not prove model access.
+        effectiveTenantId:
+          type: string
+        authentication:
+          type: object
+          required: [cliAvailable, signedIn, accountName, accountType, tenantId, message]
+          properties:
+            cliAvailable:
+              type: boolean
+            signedIn:
+              type: boolean
+              description: Cached account context only; no token or model-permission check.
+            accountName:
+              type: string
+            accountType:
+              type: string
+            tenantId:
+              type: string
+            message:
+              type: string
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - ready
+    IncidentInvestigationRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - incidentId
+      properties:
+        incidentId:
+          type: string
+          pattern: "^[0-9]{1,32}$"
+          description: Numeric Microsoft Defender incident identifier.
+          example: "560608"
+    IncidentInvestigationResponse:
+      type: object
+      required:
+        - id
+        - incidentId
+      properties:
+        id:
+          type: string
+          format: uuid
+        state:
+          $ref: "#/components/schemas/SessionState"
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        displayName:
+          type: string
+          nullable: true
+        webUrl:
+          type: string
+          format: uri
+          nullable: true
+        incidentId:
+          type: string
+          pattern: "^[0-9]{1,32}$"
+    SessionState:
+      type: string
+      enum:
+        - queued
+        - running
+        - pendingInput
+        - completed
+        - failed
+        - canceled
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            requestId:
+              type: string
+              nullable: true
+  responses:
+    ErrorResponse:
+      description: Request failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"

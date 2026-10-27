@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perception | Assurance Freshness</title>
+<style>
+  :root { color-scheme: light; --ink:#182b45; --muted:#52657c; --line:#dbe4ee; --blue:#225fd1; --fresh:#176849; --due-soon:#865900; --stale:#a54c13; --changed:#b3323c; --review:#825297; --contradicted:#92243b; --unknown:#57697e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#f3f6fa; color:var(--ink); font:14px/1.6 "Segoe UI",sans-serif; }
+  button,input,select,textarea { font:inherit; }
+  button,a.button { cursor:pointer; border:1px solid var(--line); background:white; color:var(--ink); border-radius:7px; padding:8px 13px; text-decoration:none; }
+  button:hover,a.button:hover { border-color:var(--blue); }
+  :focus-visible { outline:3px solid #86b4ff; outline-offset:3px; }
+  header { background:linear-gradient(115deg,#10243f,#193e65); color:white; padding:34px max(24px,calc((100vw - 1400px)/2)); }
+  .eyebrow { text-transform:uppercase; letter-spacing:.16em; font-size:11px; font-weight:700; color:#9bc7ff; }
+  h1 { margin:7px 0; font-size:36px; letter-spacing:-1px; }
+  header p { margin:4px 0; color:#cfdeed; max-width:780px; }
+  .header-row,.section-head,.filters,.inline { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .header-row,.section-head { justify-content:space-between; }
+  .meta { color:#c2d3e5; font-size:12px; margin-top:18px; }
+  nav { background:white; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; gap:24px; flex-wrap:wrap; }
+  nav a { color:var(--blue); text-decoration:none; }
+  main { max-width:1448px; padding:24px; margin:auto; }
+  .notice { border:1px solid #c8daef; background:#eaf2fc; border-radius:9px; padding:14px 18px; margin-bottom:20px; }
+  .cards { display:grid; grid-template-columns:repeat(7,minmax(120px,1fr)); gap:12px; margin-bottom:24px; }
+  .card { text-align:left; border-top:4px solid var(--tone); padding:15px; }
+  .card strong { font-size:30px; display:block; line-height:1.2; }
+  .card span { color:var(--muted); }
+  section { background:white; border:1px solid var(--line); border-radius:12px; margin-bottom:22px; padding:22px; }
+  h2 { font-size:20px; margin:0 0 4px; }
+  h3 { font-size:16px; margin:16px 0 8px; }
+  p { margin:6px 0 14px; }
+  .muted,.small { color:var(--muted); }
+  .small { font-size:12px; }
+  .filters { margin:18px 0; }
+  input,select,textarea { border:1px solid #b9c8d8; border-radius:6px; padding:9px; background:white; color:var(--ink); }
+  input[type=search] { min-width:250px; flex:1; }
+  label { display:flex; gap:7px; align-items:center; }
+  .scroll { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; text-align:left; }
+  th { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#f8fafc; }
+  th,td { padding:12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  td:first-child { min-width:230px; }
+  .badge { display:inline-block; border:1px solid currentColor; color:var(--tone); border-radius:5px; padding:2px 8px; font-size:12px; font-weight:600; white-space:nowrap; }
+  .heat td { vertical-align:middle; }
+  .heat button { width:100%; color:var(--tone); background:color-mix(in srgb,var(--tone) 9%,white); font-weight:700; min-width:65px; }
+  .heat th:first-child { min-width:180px; }
+  .link-button { border:0; padding:0; color:var(--blue); background:none; text-align:left; font-weight:600; }
+  .empty { padding:30px; border:1px dashed #b8cadc; border-radius:8px; background:#f8fbff; }
+  .empty h3 { margin:0 0 6px; }
+  .detail { border-left:4px solid var(--blue); margin-top:18px; padding:16px 20px; background:#f7faff; border-radius:4px; }
+  pre { white-space:pre-wrap; overflow-wrap:anywhere; background:#f1f5f9; border:1px solid var(--line); padding:12px; border-radius:6px; max-height:360px; overflow:auto; font:12px/1.6 Consolas,monospace; }
+  .facts { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:12px; }
+  .facts div { padding:8px 0; overflow-wrap:anywhere; }
+  .facts strong { display:block; font-size:11px; text-transform:uppercase; color:var(--muted); }
+  details { margin-top:14px; }
+  summary { cursor:pointer; color:var(--blue); }
+  textarea { width:100%; min-height:340px; font:12px/1.6 Consolas,monospace; margin:12px 0; }
+  .error { color:#ad2538; }
+  .inventory-item { padding:12px 0; border-bottom:1px solid var(--line); }
+  .inventory-item summary { overflow-wrap:anywhere; }
+  footer { text-align:center; color:var(--muted); padding:0 24px 28px; font-size:12px; }
+  [hidden] { display:none !important; }
+  @media(max-width:1050px) { .cards { grid-template-columns:repeat(4,1fr); } }
+  @media(max-width:600px) { main { padding:12px; } section { padding:16px; } .cards { grid-template-columns:repeat(2,1fr); } h1 { font-size:29px; } .facts { grid-template-columns:1fr; } input[type=search] { min-width:0; width:100%; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-row"><div class="eyebrow">Project Perception / Evidence &amp; outcomes</div><button id="export-report">Export report JSON</button></div>
+  <h1>Assurance Freshness</h1>
+  <p>Which security conclusions have current evidence, and which need another look?</p>
+  <div class="meta" id="meta"></div>
+</header>
+<nav aria-label="Report sections"><a href="#overview">Overview</a><a href="#objectives">Reassessment queue</a><a href="#evidence">Evidence inventory</a><a href="#register">Assurance register</a><a href="/threat-protection">Threat to protection</a><a href="/agent-behavior">Agent Behavior Analysis</a></nav>
+<main>
+  <div class="notice"><strong>Evidence freshness is not a live guarantee.</strong> Green means reviewed supporting evidence is within policy. Only explicitly registered changes are checked; an unrecorded environment change cannot be detected. Session completion never counts as verification.</div>
+  <div id="snapshot-warning" class="notice" hidden></div>
+  <div class="cards" id="overview" aria-label="Objective counts by freshness state"></div>
+  <section>
+    <h2>Where assurance needs attention</h2>
+    <p class="muted">Objective counts by business service. Select a cell to focus the queue.</p>
+    <div class="scroll" id="heatmap"></div>
+  </section>
+  <section id="objectives">
+    <div class="section-head"><div><h2>Reassessment queue</h2><p class="muted">Failures and changed scope first. Every conclusion stays linked to its evidence.</p></div><span class="small" id="queue-count" aria-live="polite"></span></div>
+    <div class="filters">
+      <input id="search" type="search" aria-label="Search objectives" placeholder="Search objective, service, owner or scope">
+      <label>State <select id="state"><option value="">All states</option></select></label>
+      <label>Service <select id="service"><option value="">All services</option></select></label>
+      <button id="reset">Reset</button>
+    </div>
+    <div id="queue" class="scroll"></div>
+    <div id="objective-detail" class="detail" hidden tabindex="-1"></div>
+  </section>
+  <section id="evidence">
+    <div class="section-head"><div><h2>Snapshot evidence inventory</h2><p class="muted">Artifacts are candidates, not verified assurances. Expand an artifact to inspect its exact text or draft an unverified objective.</p></div><span class="small" id="inventory-count"></span></div>
+    <div class="filters"><input id="evidence-search" type="search" aria-label="Search evidence" placeholder="Search session name, ID or artifact path"></div>
+    <div id="inventory"></div><button id="more-evidence" hidden>Show 30 more</button>
+  </section>
+  <section id="register">
+    <h2>Explicit assurance register</h2>
+    <p class="muted">Drafts remain unverified. Set scope identifiers, owner and a named reviewer's verification with exact evidence references. Save the downloaded register to the path below, then regenerate the report. Editing here does not change the report above or write to the tenant.</p>
+    <pre id="register-path"></pre>
+    <details id="register-editor"><summary>Edit / download register</summary>
+      <label for="register-json">Register JSON (local edits only)</label><textarea id="register-json" spellcheck="false"></textarea>
+      <div class="inline"><button id="download-register">Download register JSON</button><span id="register-status" role="status"></span></div>
+    </details>
+    <h3>Regenerate after saving</h3>
+    <pre>.\New-PerceptionAssuranceFreshnessReport.ps1</pre>
+    <details><summary>Rules and limitations</summary><ul id="limitations"></ul></details>
+  </section>
+</main>
+<footer>Read-only analysis / No model calls / No approvals or remediation performed</footer>
+<script>
+'use strict';
+const payload = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob('__ASSURANCE_PAYLOAD__'), c => c.charCodeAt(0))));
+const report = payload.report;
+const states = ['contradicted','changed','stale','review','unknown','due-soon','fresh'];
+const labels = {fresh:'Fresh evidence','due-soon':'Due soon',stale:'Stale',changed:'Changed',review:'Review impact',contradicted:'Contradicted',unknown:'Unknown'};
+const $ = id => document.getElementById(id);
+function node(tag, text, className) { const el = document.createElement(tag); if (text !== undefined) el.textContent = text; if (className) el.className = className; return el; }
+function date(value) { return value ? new Date(value).toLocaleString() : 'Not registered'; }
+function tone(el, state) { el.style.setProperty('--tone', 'var(--' + state + ')'); return el; }
+function badge(state) { return tone(node('span', labels[state], 'badge'), state); }
+function download(value, name) {
+  const url = URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'}));
+  const a = node('a'); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
+}
+function focusQueue(service, state) { $('service').value=service; $('state').value=state; renderQueue(); $('objectives').scrollIntoView({behavior:'smooth'}); }
+$('meta').textContent = 'As of ' + date(report.asOf) + ' | Snapshot ' + date(report.snapshotGeneratedAt) + ' | ' + report.sessionCount + ' sessions | ' + report.changeCount + ' registered changes';
+if (!report.snapshotGeneratedAt || new Date(report.snapshotGeneratedAt) > new Date(report.asOf)) {
+  $('snapshot-warning').hidden=false;
+  $('snapshot-warning').textContent='Snapshot collection time is missing or later than the report cutoff. This is not a historical reconstruction; evidence is resolved from the supplied snapshot.';
+}
+for (const state of ['fresh','due-soon','stale','changed','review','contradicted','unknown']) {
+  const card=tone(node('button',undefined,'card'),state);
+  card.append(node('strong',String(report.counts[state])),node('span',labels[state]));
+  card.setAttribute('aria-label',labels[state]+': '+report.counts[state]); card.onclick=()=>focusQueue('',state);
+  $('overview').append(card);
+}
+for (const state of states) { const option=node('option',labels[state]); option.value=state; $('state').append(option); }
+const services=[...new Set(report.objectives.map(o=>o.service))].sort();
+for (const service of services) { const option=node('option',service); option.value=service; $('service').append(option); }
+if (!services.length) {
+  const empty=node('div',undefined,'empty'); empty.append(node('h3','No registered assurances yet'),node('p','The snapshot is not proof of a verified security outcome. Use the evidence inventory to draft objectives, then record a reviewed conclusion and its scope in the register.'));
+  $('heatmap').append(empty);
+} else {
+  const table=node('table',undefined,'heat'), head=node('thead'), tr=node('tr'); tr.append(node('th','Business service'));
+  for (const state of states) tr.append(node('th',labels[state])); head.append(tr); table.append(head);
+  const body=node('tbody');
+  for (const service of services) {
+    const row=node('tr'); const heading=node('th',service); heading.scope='row'; row.append(heading);
+    for (const state of states) {
+      const cell=node('td'), count=report.objectives.filter(o=>o.service===service&&o.status===state).length;
+      if (count) { const b=tone(node('button',String(count)),state); b.setAttribute('aria-label',service+', '+labels[state]+': '+count); b.onclick=()=>focusQueue(service,state); cell.append(b); } else cell.textContent='-';
+      row.append(cell);
+    }
+    body.append(row);
+  }
+  table.append(body); $('heatmap').append(table);
+}
+function showObjective(objective) {
+  const panel=$('objective-detail'); panel.replaceChildren(); panel.hidden=false;
+  const close=node('button','Close details'); close.onclick=()=>{ panel.hidden=true; $('search').focus(); };
+  panel.append(close,node('h3',objective.title),badge(objective.status),node('p',objective.reason),node('strong','Next action'),node('p',objective.nextAction));
+  const facts=node('div',undefined,'facts');
+  for (const [key,value] of [['Owner',objective.owner],['Scope identifiers',objective.scopeIds.join(', ')],['Reviewer',objective.reviewer||'Not registered'],['Verified',date(objective.verifiedAt)],['Expires',date(objective.expiresAt)],['Policy',objective.freshnessDays+' days / '+objective.dueSoonDays+' day warning']]) {
+    const item=node('div'); item.append(node('strong',key),node('span',value)); facts.append(item);
+  }
+  panel.append(facts,node('h3','Registered conclusion'),node('p',objective.conclusion||'No conclusion recorded.'));
+  for (const issue of objective.evidenceIssues) panel.append(node('p',issue,'error'));
+  panel.append(node('h3','Artifact evidence'));
+  if (!objective.evidence.length) panel.append(node('p','No explicit artifact references.','muted'));
+  for (const source of objective.evidence) {
+    panel.append(node('p',source.sessionName+' / '+source.sessionId+' / '+source.outputPath),node('pre',source.excerpt),node('p',source.valid?'Reference and exact excerpt resolved. Reviewer attests its meaning.':source.issues.join(' '),source.valid?'small':'error'));
+  }
+  panel.append(node('h3','Scope-matched changes since verification'));
+  if (!objective.changes.length) panel.append(node('p','No matching changes registered. This does not prove that no changes occurred.','muted'));
+  for (const change of objective.changes) panel.append(node('p',date(change.occurredAt)+' / '+change.impact+' / '+change.title+' / '+change.scopeIds.join(', ')));
+  panel.focus();
+}
+function renderQueue() {
+  const term=$('search').value.toLowerCase(), state=$('state').value, service=$('service').value;
+  const objectives=report.objectives.filter(o=>(!state||o.status===state)&&(!service||o.service===service)&&[o.title,o.service,o.owner,...o.scopeIds].join(' ').toLowerCase().includes(term)).sort((a,b)=>states.indexOf(a.status)-states.indexOf(b.status)||(a.expiresAt||'').localeCompare(b.expiresAt||'')||a.title.localeCompare(b.title));
+  $('queue-count').textContent=objectives.length+' of '+report.objectiveCount+' objectives';
+  $('queue').replaceChildren(); $('objective-detail').hidden=true;
+  if (!objectives.length) { $('queue').append(node('p',report.objectiveCount?'No objectives match these filters.':'No registered objectives. Start with an artifact below.','empty')); return; }
+  const table=node('table'), head=node('thead'), headings=node('tr');
+  for (const label of ['Objective / service','State','Evidence age','Expires','Owner / next action']) headings.append(node('th',label));
+  head.append(headings); table.append(head); const body=node('tbody');
+  for (const objective of objectives) {
+    const row=node('tr'), title=node('td'), button=node('button',objective.title,'link-button'); button.onclick=()=>showObjective(objective);
+    title.append(button,node('div',objective.service,'small'));
+    const status=node('td'); status.append(badge(objective.status));
+    const action=node('td'); action.append(node('strong',objective.owner),node('div',objective.nextAction,'small'));
+    row.append(title,status,node('td',objective.ageDays===null?'Unknown':objective.ageDays+' days'),node('td',date(objective.expiresAt)),action); body.append(row);
+  }
+  table.append(body); $('queue').append(table);
+}
+let inventoryLimit=30;
+function draftObjective(artifact) {
+  try {
+    const register=JSON.parse($('register-json').value);
+    if (!Array.isArray(register.objectives)) throw new Error('Register must contain an objectives array.');
+    register.objectives.push({id:'objective-'+crypto.randomUUID(),title:'Review: '+(artifact.sessionName||artifact.outputPath),service:'SET BUSINESS SERVICE',owner:'SET OWNER',scopeIds:['SET EXPLICIT SCOPE IDENTIFIER'],verification:null,candidateSources:[{sessionId:artifact.sessionId,outputPath:artifact.outputPath,excerpt:artifact.content.slice(0,240)}]});
+    $('register-json').value=JSON.stringify(register,null,2);
+    $('register-status').textContent='Unverified draft added. Replace placeholders and register a reviewed verification before asserting assurance.';
+    $('register-status').className=''; $('register-editor').open=true; $('register').scrollIntoView({behavior:'smooth'});
+  } catch(error) { $('register-status').textContent=error.message; $('register-status').className='error'; $('register-editor').open=true; }
+}
+function renderInventory() {
+  const term=$('evidence-search').value.toLowerCase();
+  const artifacts=report.evidenceInventory.filter(a=>[a.sessionId,a.sessionName,a.outputPath].join(' ').toLowerCase().includes(term));
+  $('inventory-count').textContent=artifacts.length+' matching / '+report.evidenceInventory.length+' artifacts';
+  $('inventory').replaceChildren();
+  if (!artifacts.length) $('inventory').append(node('p','No artifacts match. Collect Markdown outputs in a dashboard snapshot to provide evidence.','empty'));
+  for (const artifact of artifacts.slice(0,inventoryLimit)) {
+    const details=node('details',undefined,'inventory-item'); details.append(node('summary',(artifact.available?'':'[Unavailable] ')+(artifact.sessionName||artifact.sessionId)+' / '+artifact.outputPath));
+    details.addEventListener('toggle',()=>{
+      if (!details.open||details.dataset.loaded) return;
+      details.dataset.loaded='true';
+      details.append(node('p','Session '+artifact.sessionId+' / Created '+date(artifact.createdAt),'small'),node('pre',artifact.available?artifact.content:JSON.stringify(artifact.error)));
+      if (artifact.available) { const draft=node('button','Draft unverified objective'); draft.onclick=()=>draftObjective(artifact); details.append(draft); }
+    });
+    $('inventory').append(details);
+  }
+  $('more-evidence').hidden=artifacts.length<=inventoryLimit;
+}
+$('register-path').textContent=report.registerPath;
+$('register-json').value=JSON.stringify(payload.register,null,2);
+for (const limitation of report.limitations) $('limitations').append(node('li',limitation));
+$('download-register').onclick=()=>{
+  try {
+    const register=JSON.parse($('register-json').value);
+    if (register.schemaVersion!==1||!Array.isArray(register.objectives)||!Array.isArray(register.changes)) throw new Error('Expected schemaVersion 1, objectives array and changes array.');
+    download(register,report.registerPath.split(/[\\/]/).pop());
+    $('register-status').className=''; $('register-status').textContent='Downloaded. Save over the register path above, then regenerate. The generator validates evidence and all policy fields.';
+  } catch(error) { $('register-status').className='error'; $('register-status').textContent=error.message; }
+};
+$('export-report').onclick=()=>download(report,'Perception-Assurance-Freshness.json');
+for (const id of ['search','state','service']) $(id).addEventListener(id==='search'?'input':'change',renderQueue);
+$('reset').onclick=()=>{ $('search').value=''; $('state').value=''; $('service').value=''; renderQueue(); };
+$('evidence-search').oninput=()=>{ inventoryLimit=30; renderInventory(); };
+$('more-evidence').onclick=()=>{ inventoryLimit+=30; renderInventory(); };
+renderQueue(); renderInventory();
+</script>
+</body>
+</html>

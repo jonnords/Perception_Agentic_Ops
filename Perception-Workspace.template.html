@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perception Evidence Workspace</title>
+<style>
+  :root{font:14px/1.6 "Segoe UI",sans-serif;color:#20344b;background:#f2f5fa;color-scheme:light;--muted:#56677d;--line:#dce4ee;--accent:#1768b2}
+  *{box-sizing:border-box}body{margin:0;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}button{font:inherit;cursor:pointer}
+  :focus-visible{outline:3px solid #188c98;outline-offset:3px}
+  header{flex:none;background:#101e33;color:#fff;padding:16px 26px;display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid #304057}
+  .brand-lockup{display:flex;align-items:center;gap:13px;min-width:0}.brand-mark{display:grid;place-items:center;width:42px;height:42px;flex:none;border:1px solid #3e7c91;border-radius:13px;background:linear-gradient(135deg,#214878,#12666d);box-shadow:0 0 24px #45c8be18}
+  .brand-mark svg{width:27px;height:27px}h1{font-size:18px;letter-spacing:-.4px;margin:0}header p{margin:2px 0 0;color:#afc1d7;font-size:11px}
+  button{border:1px solid #c9d5e3;border-radius:9px;padding:9px 14px;background:#fff;color:#20344b;transition:background .15s,border-color .15s}
+  button:hover{background:#eef5fc;border-color:#83afd3}#reload{flex:none;border-color:#475a72;color:#e5effc;background:#203149;font-size:12px}#reload:hover{background:#2d4360}
+  .workspace{display:grid;grid-template-columns:240px minmax(0,1fr);flex:1;min-height:0}
+  nav{overflow:auto;background:linear-gradient(180deg,#14253d,#102033);border-right:1px solid #263b55;padding:22px 12px;color:#bccde1}
+  .nav-label{margin:0 12px 14px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9eb3cc;font-weight:700}
+  nav button{display:flex;align-items:center;gap:11px;width:100%;border:1px solid transparent;text-align:left;background:none;color:#bfcee1;margin:5px 0;padding:12px 11px;font-size:12px;line-height:1.45}
+  nav button:hover{border-color:#385371;background:#203751;color:#fff}nav button[aria-current=page]{border-color:#3a6889;background:linear-gradient(110deg,#234c6b,#20374f);box-shadow:inset 3px 0 #66d1cf;color:#fff;font-weight:600}
+  .view-icon{width:20px;height:20px;flex:none}nav button[aria-current=page] .view-icon{color:#89e1de}
+  nav small{display:block;color:#adbed3;font-size:10px;margin-top:3px}.nav-note{margin:25px 10px 0;padding-top:18px;border-top:1px solid #334860;color:#adbed3;font-size:11px;line-height:1.75}
+  main{min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .view-title{flex:none;padding:15px 28px;border-bottom:1px solid var(--line);background:#ffffffed;display:flex;align-items:center;justify-content:space-between;gap:8px 20px;flex-wrap:wrap}
+  .view-title h2{font-size:14px;font-weight:650;margin:0}.meta{font-size:11px;color:var(--muted)}
+  #status{flex:none;margin:16px 28px;padding:14px 16px;border:1px solid #e3c994;background:#fff7e8;border-radius:10px;overflow-wrap:anywhere}
+  #welcome,#ai-settings{padding:30px;overflow:auto;min-height:0;scrollbar-gutter:stable}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:25px;margin-bottom:20px;box-shadow:0 4px 18px #20344b05}
+  .panel h2{margin:0 0 10px;font-size:22px;line-height:1.3;letter-spacing:-.5px}.panel h3{font-size:16px}.panel p{color:var(--muted)}
+  .overview-hero{position:relative;overflow:hidden;padding:32px;border-color:#26465e;background:radial-gradient(ellipse at 100% 0%,#1f6275 0,transparent 65%),linear-gradient(115deg,#182d4b,#152b42);color:#fff;box-shadow:0 8px 26px #14294212}
+  .overview-hero h2{max-width:770px;font-size:clamp(24px,2.4vw,34px);letter-spacing:-1px;line-height:1.2;margin:15px 0 12px}.overview-hero>p{max-width:760px;color:#c2d5e8;font-size:13px;line-height:1.8}
+  .eyebrow{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#136d83}.overview-hero .eyebrow{color:#a4e7e3}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+  .cards>div{padding:17px 20px;border:1px solid #49647d;border-radius:12px;background:#ffffff08}.cards strong{display:block;font-size:26px;font-weight:650;letter-spacing:-.6px;line-height:1.3}.cards span{display:block;margin-top:7px;color:#c2d5e8;font-size:11px}
+  .section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:28px 0 14px}.section-heading h2{margin:0;font-size:19px;letter-spacing:-.4px}.section-heading span{color:var(--muted);font-size:11px}
+  .report-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:26px}
+  .report-tile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:12px;min-width:0;padding:21px;border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 12px #20344b04;white-space:normal}
+  .report-tile:hover{border-color:#7faed4;background:#fafdff;box-shadow:0 6px 20px #1b589912}
+  .tile-top{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}.tile-top .view-icon{box-sizing:content-box;padding:9px;border-radius:11px;background:#eaf2fc;color:#1764a9}
+  .report-tile:nth-child(2n) .tile-top .view-icon{background:#e9f6f3;color:#17796e}.report-tile:nth-child(3n) .tile-top .view-icon{background:#f1edfa;color:#7055a3}
+  .report-tile strong{font-size:14px;line-height:1.4}.tile-description{font-size:12px;color:var(--muted);line-height:1.7}.tile-action{margin-top:auto;font-size:11px;font-weight:650;color:#1764a9}
+  .availability{padding:3px 7px;border-radius:5px;background:#edf2f8;color:#4c637e;font-size:10px}.availability.missing{background:#fff5e3;color:#88531c}
+  .setup-panel>summary{cursor:pointer;font-size:15px;font-weight:650}.setup-panel[open]>summary{margin-bottom:16px}.coverage-panel{border-left:3px solid #6798bb;background:#f9fbff}.coverage-panel h2{font-size:16px}.coverage-panel p{font-size:12px;line-height:1.8;margin-bottom:0}
+  pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:17px;background:#f0f4fa;border:1px solid var(--line);border-radius:10px;font:12px/1.8 Consolas,monospace;color:#314e72}
+  li{margin-bottom:7px}iframe{width:100%;height:100%;flex:1;min-height:0;border:0;display:block;background:#f2f5fa}
+  [hidden]{display:none!important}
+  #ai-settings>.panel{max-width:1100px}
+  fieldset{border:0;padding:0;margin:0;min-width:0}input,select{font:inherit;color:inherit}
+  .settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .settings-field{display:block;font-weight:600}.settings-field input,.settings-field select{display:block;width:100%;margin-top:7px;border:1px solid #b7c7da;border-radius:9px;padding:11px 12px;background:#fbfcff}
+  .settings-field small{display:block;font-weight:400;color:#617888;margin-top:5px}.wide{grid-column:1/-1}
+  .settings-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}.primary{background:#1768b2;color:#fff;border-color:#1768b2}.primary:hover{background:#12538e;color:#fff}
+  button:disabled{opacity:.55;cursor:not-allowed}.consent{display:flex;gap:10px;align-items:flex-start;margin-top:22px}.consent input{margin-top:5px;flex:none}
+  .settings-feedback{padding:12px;border-radius:6px;background:#edf3f6;overflow-wrap:anywhere}.settings-feedback[data-kind=error]{background:#fff0ed;color:#922c21}.settings-feedback[data-kind=success]{background:#e3f2ef;color:#096a64}
+  #ai-authentication{overflow-wrap:anywhere}#ai-settings details{margin-top:18px}#ai-settings summary{cursor:pointer;font-weight:600}#ai-settings details .settings-field{margin-top:12px}
+  @media(max-width:1150px){.workspace{grid-template-columns:212px minmax(0,1fr)}.report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#welcome,#ai-settings{padding:22px}.cards>div{padding:14px}.cards strong{font-size:23px}}
+  @media(max-width:800px){
+    .workspace{display:flex;flex-direction:column}nav{display:flex;align-items:stretch;gap:6px;flex:none;max-height:106px;overflow:auto;border-right:0;border-bottom:1px solid #334860;padding:8px 12px}
+    nav button{width:auto;flex:none;max-width:210px;font-size:11px;margin:0;padding:9px 11px;gap:8px}nav button>span{max-width:145px}nav small{font-size:9px}.nav-note,.nav-label{display:none}
+    main{flex:1}.settings-grid{grid-template-columns:1fr}.panel{padding:19px}#welcome,#ai-settings{padding:16px}.overview-hero{padding:24px}
+    header{padding:13px 16px;flex-wrap:wrap;gap:10px}header p{max-width:420px;font-size:10px}h1{font-size:16px}.brand-mark{width:36px;height:36px}.brand-lockup{gap:10px}.view-title{padding:11px 16px}.meta{font-size:10px}#status{margin:12px 16px}
+    .section-heading{align-items:flex-start;flex-direction:column;gap:4px}.cards{gap:8px}.cards span{font-size:10px}
+  }
+  @media(max-width:520px){.report-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr;gap:8px;margin-top:20px}.cards>div{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px}.cards span{margin:0}.cards strong{font-size:22px}.overview-hero h2{font-size:26px}#reload{padding:7px 11px}.view-title .meta{max-width:100%}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header><div class="brand-lockup"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M16 3 28 10v12L16 29 4 22V10Z M4 10l12 7 12-7 M16 17v12"/><path d="m10 13 6-4 6 4" stroke="#83e4dd"/></svg></span><div><h1>Perception Evidence Workspace</h1><p>Customer preview · Local evidence. Model analysis only when explicitly requested.</p></div></div><button id="reload">Reload saved reports</button></header>
+<div class="workspace">
+  <nav aria-label="Workspace views" id="navigation"></nav>
+  <main>
+    <div class="view-title"><h2 id="view-title">Welcome</h2><span class="meta" id="view-meta"></span></div>
+    <div id="status" role="status" hidden></div>
+    <section id="welcome"></section>
+    <section id="ai-settings" aria-label="AI settings" hidden>
+      <div class="panel">
+        <h2>Configure your Azure AI deployment</h2>
+        <p>Settings are saved on this computer in the runner's local configuration file. Saving does not call a model, send evidence or regenerate reports. No API keys or tokens are accepted or stored here.</p>
+        <form id="ai-settings-form">
+          <fieldset id="ai-settings-fields" disabled>
+            <div class="settings-grid">
+              <label class="settings-field wide" for="ai-endpoint">Azure endpoint
+                <input id="ai-endpoint" type="url" required autocomplete="off" spellcheck="false" placeholder="https://&lt;resource&gt;.services.ai.azure.com/openai/v1/responses">
+                <small>Complete HTTPS URL ending in /responses or /chat/completions. Only supported Azure resource hosts are accepted. An api-version query is optional.</small>
+              </label>
+              <label class="settings-field" for="ai-deployment">Deployment name
+                <input id="ai-deployment" type="text" required autocomplete="off" spellcheck="false">
+                <small>Your Azure deployment name, not necessarily the model family name.</small>
+              </label>
+              <label class="settings-field" for="ai-format">API format
+                <select id="ai-format"><option value="responses">Responses</option><option value="chat">Chat completions</option></select>
+              </label>
+              <label class="settings-field wide" for="ai-tenant">Model tenant override (optional)
+                <input id="ai-tenant" type="text" autocomplete="off" spellcheck="false" placeholder="Tenant GUID, or leave blank">
+                <small>Blank uses the existing Perception tenant pin, if set; otherwise the signed-in Azure CLI tenant. This does not change the Perception tenant.</small>
+              </label>
+            </div>
+            <details><summary>Advanced: token audience</summary>
+              <label class="settings-field" for="ai-resource">Entra token resource
+                <select id="ai-resource"><option value="https://cognitiveservices.azure.com">https://cognitiveservices.azure.com</option><option value="https://ai.azure.com">https://ai.azure.com</option></select>
+                <small>Keep the audience required by your deployment. Changing this does not sign you in or grant model access.</small>
+              </label>
+            </details>
+            <label class="consent"><input id="ai-test-consent" type="checkbox"><span>I authorize one chargeable connection test against the current form values. It sends a fixed synthetic prompt only, never tenant reports. Charges depend on the deployment; a timed-out request may still be billed.</span></label>
+            <div class="settings-actions"><button class="primary" type="submit" id="ai-save">Save settings</button><button type="button" id="ai-test" disabled>Test connection (may incur charges)</button></div>
+          </fieldset>
+        </form>
+        <p id="ai-feedback" class="settings-feedback" role="status" aria-live="polite">Loading saved settings...</p>
+      </div>
+      <div class="panel">
+        <h3>Azure CLI authentication</h3>
+        <div id="ai-authentication">Reading account context...</div>
+        <p>Sign in from a terminal with <code>az login --tenant &lt;your-tenant-id&gt;</code>, then select Reload settings. The app never starts interactive sign-in, accepts pasted credentials, or sends access tokens to the browser. A cached account context does not prove that a token is valid or that you have access to the model.</p>
+      </div>
+      <div class="panel">
+        <h3>Run analysis only when you intend to</h3>
+        <p>AI analysis can disclose retained report evidence to your configured Azure model deployment and incur charges. Saving or testing settings never runs report analysis. Command-line configuration remains supported.</p>
+        <p>To regenerate reports with AI, stop the runner first, then use an explicit command:</p>
+        <pre>.\Start-App.ps1 -AnalyzeAgentBehavior
+.\Start-App.ps1 -ModelSynthesis</pre>
+        <p>If you started the runner with a custom configuration path, pass the same <code>-ConfigurationPath</code> to these commands.</p>
+      </div>
+    </section>
+    <iframe id="report-frame" title="Selected Perception report" hidden></iframe>
+  </main>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let manifest=null;
+let aiSettingsLoaded=false,aiSettingsBusy=false;
+function element(tag,text,cls){const item=document.createElement(tag);if(text!==undefined)item.textContent=text;if(cls)item.className=cls;return item;}
+function panel(title,text){const item=element('div',undefined,'panel');item.append(element('h2',title));if(text)item.append(element('p',text));return item;}
+const viewDesign={
+  overview:{path:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',description:'Start with your saved evidence.'},
+  environment:{path:'M3 4h18v12H3z M8 21h8 M12 16v5 M6 12l3-3 3 2 5-5',description:'Explore collected sessions, agents and source artifacts.'},
+  'threat-protection':{path:'M5 3h14v18H5z M8 7h8 M8 11h8 M8 15h5',description:'Review agent-reported findings, conclusions and next actions.'},
+  'assurance-freshness':{path:'M12 3a9 9 0 1 0 9 9 M12 6v6l4 2 M17 3l2 2 3-3',description:'Check evidence age, collection gaps and run quality.'},
+  'operational-loops':{path:'M4 7h13l-3-3 M20 17H7l3 3 M20 7v5 M4 17v-5',description:'Trace operating loops, practical playbooks and outcome evidence.'},
+  'agent-behavior':{path:'M8 5h8v5H8z M3 17h5v4H3z M16 17h5v4h-5z M12 10v4 M5.5 17v-3h13v3 M12 2v3',description:'Compare agent themes and deviations across retained runs.'},
+  'systemic-threat-signals':{path:'M9 12h6 M6 9V6h12v3 M6 15v3h12v-3 M3 9h6v6H3z M15 9h6v6h-6z',description:'Investigate cross-run connections and unverified hypotheses.'},
+  'defender-investigations':{path:'m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z M8 12l3 3 5-6',description:'Compare exact incident matches and Defender investigation evidence.'},
+  'ai-settings':{path:'M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6',description:'Manage your own model connection.'}
+};
+function viewIcon(id){
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  for(const [key,value] of Object.entries({viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'1.6','stroke-linecap':'round','stroke-linejoin':'round',class:'view-icon','aria-hidden':'true',focusable:'false'}))svg.setAttribute(key,value);
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',(viewDesign[id]||viewDesign.overview).path);svg.append(path);return svg;
+}
+function notice(text){$('status').textContent=text;$('status').hidden=!text;}
+function overview(){
+  const root=$('welcome');root.replaceChildren();root.hidden=false;$('report-frame').hidden=true;
+  const intro=panel('One workspace. Evidence across your agentic operations.','Use the navigation to inspect investigations, triage, report freshness, agent behavior and possible cross-run connections. These are evidence views, not independent assurances of protection.');
+  intro.classList.add('overview-hero');intro.prepend(element('span','PERCEPTION / EVIDENCE WORKSPACE','eyebrow'));
+  const cards=element('div',undefined,'cards');
+  for(const [label,value] of [['Saved report views',manifest.reports.filter(r=>r.available).length],['Azure CLI installed',manifest.azureCliAvailable?'Yes':'Required for collection'],['Model configured',manifest.modelConfigured?'Yes':'Optional setup']]){
+    const item=element('div');item.append(element('strong',String(value)),element('span',label));cards.append(item);
+  }
+  intro.append(cards);root.append(intro);
+  const heading=element('div',undefined,'section-heading');heading.append(element('h2','Choose your next view'),element('span','Saved evidence. No analysis runs when you open a view.'));root.append(heading);
+  const reportGrid=element('div',undefined,'report-grid');
+  for(const report of manifest.reports){
+    const tile=element('button',undefined,'report-tile');tile.type='button';tile.onclick=()=>select(report.id);
+    const top=element('span',undefined,'tile-top');top.append(viewIcon(report.id),element('span',report.available?'Saved report':'Not generated','availability'+(report.available?'':' missing')));
+    tile.append(top,element('strong',report.title),element('span',(viewDesign[report.id]||viewDesign.overview).description,'tile-description'),element('span',report.available?'Open report >':'View setup >','tile-action'));reportGrid.append(tile);
+  }
+  root.append(reportGrid);
+  const setup=element('details',undefined,'panel setup-panel');setup.open=!manifest.reports.some(report=>report.available);
+  setup.append(element('summary','First run / refresh saved evidence'),element('p','Stop the running app with Ctrl+C before restarting it with collection switches. Sign in to the intended tenant; tokens are acquired automatically and never pasted into the browser.'));
+  setup.append(element('pre','az login --tenant <your-tenant-id>\n.\\Start-App.ps1 -Refresh'));
+  setup.append(element('p','Optional reports require additional permission or explicit model analysis:'));
+  setup.append(element('pre','.\\Start-App.ps1 -Refresh -IncludeDefender\n.\\Start-App.ps1 -AnalyzeAgentBehavior\n.\\Start-App.ps1 -ModelSynthesis'));
+  setup.append(element('p','For model analysis, open AI Settings to configure your Azure endpoint and deployment, or continue using perception.config.json. The package has no developer resources or credentials. Model calls may incur charges.'));
+  root.append(setup);
+  const boundaries=panel('Coverage boundaries','All reports evaluate retained evidence, not guaranteed complete tenant history. Session collection is currently limited to the requested first page (up to 500); the upstream continuation-URL issue remains unresolved. Agent verdicts, systemic hypotheses and recommendations are not confirmed remediation. Missing or unavailable evidence must not be read as evidence of safety.');boundaries.classList.add('coverage-panel');root.append(boundaries);
+}
+function selectedId(){const value=new URLSearchParams(location.hash.slice(1)).get('view');return value||'overview';}
+function select(id){if(selectedId()===id){render();return;}location.hash=new URLSearchParams({view:id}).toString();}
+function reportTarget(url,currentUrl,reports,hint){
+  if(url.origin!==currentUrl.origin)return null;
+  if(url.pathname===currentUrl.pathname&&url.search===currentUrl.search&&url.hash)return null;
+  if(url.pathname==='/'&&url.hash){
+    const id=new URLSearchParams(url.hash.slice(1)).get('view');
+    return id==='overview'||id==='ai-settings'||reports.some(report=>report.id===id)?id:null;
+  }
+  if(url.pathname==='/'&&!url.hash)return 'environment';
+  const report=reports.find(report=>report.path===url.pathname||report.id===hint);
+  return report?report.id:null;
+}
+function navigateReport(frame,path){
+  if(frame.dataset.reportPath===path)return;
+  frame.dataset.reportPath=path;
+  frame.contentWindow.location.replace(new URL(path,location.href).href);
+}
+function render(){
+  if(!manifest)return;
+  const id=selectedId(),report=manifest.reports.find(r=>r.id===id);
+  for(const button of $('navigation').querySelectorAll('button')){if(button.dataset.view===id)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');}
+  notice('');$('ai-settings').hidden=id!=='ai-settings';$('reload').textContent=id==='ai-settings'?'Reload settings':'Reload saved reports';
+  $('view-title').textContent=id==='ai-settings'?'AI Settings':report?report.title:'Workspace overview';$('view-meta').textContent='';
+  if(id==='ai-settings'){$('welcome').hidden=true;$('report-frame').hidden=true;if(!aiSettingsLoaded&&!aiSettingsBusy)loadAiSettings();return;}
+  if(!report){overview();return;}
+  if(!report.available){
+    $('report-frame').hidden=true;$('welcome').hidden=false;$('welcome').replaceChildren();
+    const help=panel(report.title+' is not generated yet','No sample tenant data is shipped. Generate this view from your own tenant, then select Reload saved reports.');
+    help.append(element('pre',report.command));$('welcome').append(help);
+    notice('This view is unavailable, not an empty or successful assessment.');return;
+  }
+  $('welcome').hidden=true;$('report-frame').hidden=false;$('view-meta').textContent='Saved '+new Date(report.modifiedAt).toLocaleString()+' · Opening a view does not run analysis';
+  const frame=$('report-frame');frame.title=report.title;navigateReport(frame,report.path);
+}
+$('report-frame').onload=()=>{
+  try{
+    const doc=$('report-frame').contentDocument;if(!doc)return;
+    doc.documentElement.classList.add('perception-embedded');
+    doc.addEventListener('click',event=>{
+      if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+      const link=event.target.closest('a[href]');if(!link||link.hasAttribute('download')||(link.target&&link.target!=='_self'))return;
+      const target=reportTarget(new URL(link.href,doc.baseURI),new URL(doc.location.href),manifest.reports,link.dataset.perceptionView);
+      if(target){event.preventDefault();select(target);}
+    });
+  }catch(error){console.error('Report embedding failed',error);notice('The selected report could not be embedded. Reload saved reports or open its standalone HTML.');}
+};
+$('report-frame').onerror=()=>notice('The selected saved report failed to load. Reload saved reports and verify that it still exists.');
+async function load(){
+  try{
+    const response=await fetch('/api/workspace',{cache:'no-store'});if(!response.ok)throw new Error('Workspace status returned HTTP '+response.status);
+    manifest=await response.json();$('navigation').replaceChildren(element('p','Evidence workspace','nav-label'));
+    for(const view of [{id:'overview',title:'Workspace overview',available:true},...manifest.reports,{id:'ai-settings',title:'AI Settings',available:true}]){
+      const button=element('button'),label=element('span',view.title);button.dataset.view=view.id;button.onclick=()=>select(view.id);
+      if(!view.available)label.append(element('small','Not generated'));button.append(viewIcon(view.id),label);$('navigation').append(button);
+    }
+    $('navigation').append(element('p','Local preview. Save AI settings here; report analysis still requires explicit command-line switches. The optional connection test may incur charges.','nav-note'));render();
+  }catch(error){console.error('Workspace status failed',error);notice('Could not load workspace status. Verify that the local runner is still running. '+error.message);}
+}
+function aiFeedback(message,kind='info'){$('ai-feedback').textContent=message;$('ai-feedback').dataset.kind=kind;}
+function aiBusy(value){aiSettingsBusy=value;$('ai-settings-fields').disabled=value;$('reload').disabled=value;$('ai-test').disabled=value||!$('ai-test-consent').checked;}
+function aiModelFromForm(){
+  return {endpoint:$('ai-endpoint').value.trim(),deployment:$('ai-deployment').value.trim(),apiFormat:$('ai-format').value,tenantId:$('ai-tenant').value.trim(),tokenResource:$('ai-resource').value};
+}
+async function aiRequest(path,body){
+  const options={cache:'no-store'};
+  if(body!==undefined){options.method='POST';options.headers={'Content-Type':'application/json','X-Perception-Settings':'1'};options.body=JSON.stringify(body);}
+  const response=await fetch(path,options);
+  let data;
+  try{data=await response.json();}catch{throw new Error('The local runner returned an unreadable response (HTTP '+response.status+').');}
+  if(!response.ok)throw new Error(data.error?.message||'AI settings request failed (HTTP '+response.status+').');
+  return data;
+}
+async function loadAiSettings(){
+  if(aiSettingsBusy)return;
+  aiBusy(true);aiFeedback('Reading saved settings and Azure CLI account context. No model call is made.');
+  try{
+    const data=await aiRequest('/api/ai-settings');
+    for(const [id,name] of [['ai-endpoint','endpoint'],['ai-deployment','deployment'],['ai-format','apiFormat'],['ai-tenant','tenantId'],['ai-resource','tokenResource']])$(id).value=data.model[name];
+    $('ai-test-consent').checked=false;manifest.modelConfigured=data.configured;
+    const auth=data.authentication,root=$('ai-authentication');root.replaceChildren();
+    root.append(element('p',auth.message));
+    if(auth.signedIn){root.append(element('p','Account: '+auth.accountName+' ('+auth.accountType+')'),element('p','CLI account tenant: '+auth.tenantId));}
+    aiSettingsLoaded=true;aiFeedback('Saved settings loaded. Connection not tested. No model request has been made.');
+  }catch(error){
+    $('ai-authentication').textContent='Account status could not be loaded. Use Reload settings to retry.';
+    aiFeedback('Could not load AI settings. '+error.message,'error');
+  }finally{aiBusy(false);if(!aiSettingsLoaded)$('ai-settings-fields').disabled=true;}
+}
+async function submitAiSettings(testConnection){
+  if(aiSettingsBusy||!$('ai-settings-form').reportValidity())return;
+  if(testConnection&&!$('ai-test-consent').checked){aiFeedback('Authorize the chargeable synthetic connection test first.','error');return;}
+  const body={model:aiModelFromForm()};
+  if(testConnection)body.consent=true;
+  aiBusy(true);aiFeedback(testConnection?'Testing the current form values with synthetic input only. This may take up to a minute.':'Saving locally. No model request will be made.');
+  try{
+    const data=await aiRequest(testConnection?'/api/ai-settings/test':'/api/ai-settings',body);
+    if(!testConnection)manifest.modelConfigured=data.configured;
+    aiFeedback(data.message+(testConnection?' Tested deployment: '+data.deployment+'. Save settings separately to persist these values.':''),'success');
+  }catch(error){aiFeedback((testConnection?'Connection test failed. ':'Settings were not saved. ')+error.message,'error');}
+  finally{$('ai-test-consent').checked=false;aiBusy(false);}
+}
+$('ai-settings-form').onsubmit=event=>{event.preventDefault();submitAiSettings(false);};
+$('ai-test').onclick=()=>submitAiSettings(true);
+$('ai-settings-form').oninput=event=>{if(event.target!==$('ai-test-consent')){$('ai-test-consent').checked=false;aiFeedback('Form values changed. Save to persist them; authorize a new test to verify this configuration.');}$('ai-test').disabled=aiSettingsBusy||!$('ai-test-consent').checked;};
+$('reload').onclick=()=>{if(selectedId()==='ai-settings'){loadAiSettings();return;}delete $('report-frame').dataset.reportPath;load();};
+addEventListener('hashchange',render);load();
+</script>
+</body>
+</html>

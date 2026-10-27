@@ -1,0 +1,162 @@
+{
+  "product": "Perception Evidence Workspace",
+  "version": "0.2.0-preview.2",
+  "distribution": "customer-preview",
+  "files": [
+    {
+      "path": "README.md",
+      "size": 25249,
+      "sha256": "bc65cc0020bda593d878f85769d11a7f5bca735736666d41985530ff92648c3f"
+    },
+    {
+      "path": "perception.config.example.json",
+      "size": 223,
+      "sha256": "8de1290eb32a0aee785ca32becd33e4ae650f3b31453f70a7852f75b69a5a00b"
+    },
+    {
+      "path": "Start-App.ps1",
+      "size": 4376,
+      "sha256": "795f7ae31c03ce92b5a6792d13551094160e97736a2a639bfaeeceb3585823d4"
+    },
+    {
+      "path": "Start-PerceptionLiveEnvironment.ps1",
+      "size": 22456,
+      "sha256": "903fe016547b85dad18b4e45d8234bd398d68e5176b144e4d3151a1b409525bb"
+    },
+    {
+      "path": "Perception-Workspace.template.html",
+      "size": 29055,
+      "sha256": "b6513d06811b4170a944a0e8a1ea67837793f56d4595bb4da7170e1eaaf9554c"
+    },
+    {
+      "path": "Get-PerceptionConfiguration.ps1",
+      "size": 4402,
+      "sha256": "612b931a2a8b034a5f232bb3c5b341fd2f1a4c6aa8e4a384c8d996137b010df4"
+    },
+    {
+      "path": "Get-PerceptionAuthentication.ps1",
+      "size": 1347,
+      "sha256": "8f134449cb2a3de57459f7fe060fd8408a32682c656bae2c13d785298165f569"
+    },
+    {
+      "path": "Get-PerceptionAiSettings.ps1",
+      "size": 7255,
+      "sha256": "1e176217eeffae12a1e652d352c341c716810254065da619639fc8dcc45715c5"
+    },
+    {
+      "path": "Show-PerceptionLiveEnvironment.ps1",
+      "size": 88096,
+      "sha256": "b0ad0669e836c343b0a7f1a7da1a6c63c223f015e8774c4e2bb66f8151ff4973"
+    },
+    {
+      "path": "Get-PerceptionAgentBehaviorAnalysis.ps1",
+      "size": 41522,
+      "sha256": "162742663c46e5782c3263c822e88b8a1079933f2399f90f0e5f031fb8eff9bc"
+    },
+    {
+      "path": "Get-PerceptionAssuranceFreshness.ps1",
+      "size": 11213,
+      "sha256": "60e8f4b49076f81d0de7661b45e3ef3850b7df31886cdbcd335cd6ae4b903d03"
+    },
+    {
+      "path": "Get-PerceptionOperationalLoops.ps1",
+      "size": 13586,
+      "sha256": "b6ccc9a595beba8b11b19820c8e5945348edf0c42dc622e3321194039ace3487"
+    },
+    {
+      "path": "Get-PerceptionThreatProtection.ps1",
+      "size": 21643,
+      "sha256": "c92d5f230c37a931f9d86eba25e7c391fd4c67d1ec07c24ec3176eddccc852b7"
+    },
+    {
+      "path": "Get-PerceptionReportEvidence.ps1",
+      "size": 5428,
+      "sha256": "4c51921152ba7eeaafa8e4e475308ef2106ef7bcd5d0b7c514bc38042b9784ca"
+    },
+    {
+      "path": "Get-PerceptionSnapshotInsights.ps1",
+      "size": 25884,
+      "sha256": "eb0dc7dad19cf14cf77d5a197340cafcab1f45df029a22fff168e0dd72396e10"
+    },
+    {
+      "path": "Get-PerceptionSystemicSignals.ps1",
+      "size": 15288,
+      "sha256": "ea1e318ce82daf787bc5ced35cf649bd39abe5fc70e005bceccffc242e46df2d"
+    },
+    {
+      "path": "Invoke-PerceptionSystemicSynthesis.cjs",
+      "size": 14683,
+      "sha256": "3939865d7ab9893ac14abf0d40db8cba260c92bea1f9b696c570805aaa381498"
+    },
+    {
+      "path": "New-PerceptionAgentBehaviorReport.ps1",
+      "size": 45459,
+      "sha256": "16e07ee37cb9968c3568fb06dbe2044882f380e584b4f0d7621e6617e4aa2e52"
+    },
+    {
+      "path": "New-PerceptionAssuranceFreshnessReport.ps1",
+      "size": 4570,
+      "sha256": "f8d0f170d85c616917fc49d24e2e0d441a151cb80cad237b39cd9e9d7a8020fc"
+    },
+    {
+      "path": "New-PerceptionOperationalLoopsReport.ps1",
+      "size": 2760,
+      "sha256": "aa3cfc735c902160ac2872b760568220a9689fbad5d0759f13ad3b12311dcec1"
+    },
+    {
+      "path": "New-PerceptionThreatProtectionReport.ps1",
+      "size": 4330,
+      "sha256": "af36b3eb9e0855eb98dad4cab0eacce7fab6bae3b2aa6b6cdf711ccede67b4e2"
+    },
+    {
+      "path": "New-PerceptionDefenderInvestigationReport.ps1",
+      "size": 81910,
+      "sha256": "c035c09fe415aa84a68ec61e7c397c0b05d27d8a830153e4504d5bdfe117ba69"
+    },
+    {
+      "path": "New-PerceptionSystemicThreatReport.ps1",
+      "size": 5843,
+      "sha256": "ca55c1c099c19f822279681bd25fdc72a338d5cf9d9ed79a75e6abfe6b3e2422"
+    },
+    {
+      "path": "Assurance-Freshness.template.html",
+      "size": 20297,
+      "sha256": "bffe0f20c667b18cdc1b609182c1404c13867acf665cf7a846520c961fb3e2a9"
+    },
+    {
+      "path": "Threat-Protection.template.html",
+      "size": 25852,
+      "sha256": "c4dc2a3b8a81e2ec062d8c7911c917fcd3dd98a60786bf118dada381328d7082"
+    },
+    {
+      "path": "Snapshot-Insights.template.html",
+      "size": 90289,
+      "sha256": "01e486c7280adde6b85744c3b520da1c8e225806e8aa0308fed28760d40787a5"
+    },
+    {
+      "path": "Set-PerceptionReportPresentation.ps1",
+      "size": 22917,
+      "sha256": "8982ab561e865104f294d4e1c52a22f55275ff6a4d96defdeb225e18da43640e"
+    },
+    {
+      "path": "Update-PerceptionReportPresentation.ps1",
+      "size": 2012,
+      "sha256": "9053e07dab60d5056a6b804f4a432b471a75aa3cbe0cf416862fad6a1f38e894"
+    },
+    {
+      "path": "openapi/local-runner.openapi.yaml",
+      "size": 16640,
+      "sha256": "eea7d7b7b47a159a7a264b50f140a84b444ab0100609a67bf5648245f35fbb3d"
+    }
+  ],
+  "excluded": [
+    "tenant reports and snapshots",
+    "real configuration",
+    "tokens and credentials",
+    "prior archives",
+    "Azure local settings",
+    "Council installation and private environment",
+    "tests and development tooling",
+    "development notes and logs"
+  ]
+}
